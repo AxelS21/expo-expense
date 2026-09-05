@@ -41,5 +41,8 @@
     "react-dom": "^19.2.3",
     "react-test-renderer": "^19.2.3",
     "typescript": "~6.0.3"
+  },
+  "allowScripts": {
+    "better-sqlite3@13.0.3": true
   }
 }
