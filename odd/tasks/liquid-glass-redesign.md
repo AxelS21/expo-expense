@@ -42,3 +42,4 @@ Redesign the app UI around iOS 26 liquid glass, using Monzo as the visual refere
 
 ## Progress
 - T1 route: delegated (writer touches 2+ non-trivial files).
+- T1 review: medium risk, consent granted, 1 lens (reliability) approved and acknowledged. Reviewed boundary advances to 4d25dfc.
