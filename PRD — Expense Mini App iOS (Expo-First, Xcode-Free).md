@@ -76,7 +76,7 @@ Debe ser:
 - accesible desde Lock Screen;
 - desbloqueada mediante los mecanismos normales de iOS al acceder desde Lock Screen;
 - mantenible desde Windows/Linux;
-- compilable mediante EAS Build;
+- compilable en la nube (GitHub Actions; EAS Build como alternativa paga);
 - independiente de Xcode local.
 
 ---
@@ -181,7 +181,7 @@ Antes de incorporar cualquier dependencia deberá evaluarse:
 
 1. si existe una solución oficial de Expo;
 2. si funciona mediante Expo CNG;
-3. si funciona mediante EAS Build;
+3. si funciona en la build de GitHub Actions (prebuild + xcodebuild en un runner macOS);
 4. si puede configurarse sin editar el proyecto Xcode;
 5. si puede mantenerse desde Windows/Linux.
 
@@ -193,7 +193,7 @@ El proyecto MUST permanecer compatible con:
 
 - Expo;
 - Continuous Native Generation;
-- EAS Build;
+- builds en la nube sin Mac propia (GitHub Actions);
 - desarrollo en Windows/Linux.
 
 El desarrollador NO dispone de:
@@ -205,6 +205,8 @@ El desarrollador NO dispone de:
 Por lo tanto:
 
 > ninguna funcionalidad podrá depender de editar manualmente el proyecto iOS generado.
+
+Excepción acotada: el workflow de CI puede ajustar archivos generados de forma automática y documentada (por ejemplo, el App Group del widget para AltStore). Nunca a mano.
 
 ---
 
@@ -268,8 +270,11 @@ expo-document-picker
 ## Builds
 
 ```text
-EAS Build
+GitHub Actions (macOS runner) → .ipa sin firmar + firma ad-hoc de entitlements
+AltStore + Apple ID gratuito → firma e instalación en el iPhone
 ```
+
+EAS Build queda como alternativa si en el futuro se paga el Apple Developer Program.
 
 ---
 
@@ -650,7 +655,7 @@ Sólo podrá agregarse si puede resolverse mediante:
 - Expo Modules;
 - config plugins;
 - generación automática;
-- EAS Build;
+- build en GitHub Actions;
 
 sin necesidad de abrir Xcode localmente.
 
@@ -771,12 +776,19 @@ La aplicación estará inicialmente destinada a uso privado.
 No es requisito publicarla en App Store ni distribuirla por TestFlight durante el MVP. La distribución por defecto es:
 
 ```text
-EAS Internal Distribution
+GitHub Actions → .ipa sin firmar → AltStore (Apple ID gratuito) → iPhone
 ```
 
-En iOS se utilizará provisioning Ad Hoc. Cada uno de los dos iPhone iniciales debe tener su UDID registrado y todo dispositivo adicional requerirá un build o re-firma que lo incluya.
+No requiere membresía paga del Apple Developer Program. Límites de la cuenta gratuita:
 
-Este flujo requiere una membresía paga del Apple Developer Program.
+- la firma vence a los 7 días y se renueva desde AltStore (automático con AltServer en la misma Wi-Fi), sin recompilar;
+- hasta 10 App IDs por semana; la app usa 2 (app y extensión del widget);
+- hasta 3 apps sideloadeadas activas por dispositivo, contando AltStore;
+- cada iPhone adicional instala el `.ipa` con su propio Apple ID.
+
+Los cambios de JavaScript se entregan por EAS Update (sección 30). El procedimiento completo está en `docs/release-workflow.md`.
+
+Si la cuenta gratuita deja de alcanzar, la alternativa es EAS Build con provisioning Ad Hoc, que requiere la membresía paga.
 
 ---
 
@@ -793,11 +805,15 @@ Expo
      ↓
 TypeScript
      ↓
-Git
+Git / GitHub
      ↓
-EAS Build
+Expo Go (desarrollo diario)
      ↓
-macOS runner remoto
+EAS Update (cambios de JavaScript)
+     ↓
+GitHub Actions macOS runner (solo cambios nativos)
+     ↓
+AltStore
      ↓
 iPhone
 ```
@@ -838,7 +854,7 @@ como fuente de configuración nativa.
 Antes de instalar una dependencia, verificar:
 
 - compatibilidad con versión actual de Expo;
-- soporte para EAS Build;
+- compatibilidad con la build de GitHub Actions;
 - soporte para CNG;
 - soporte mediante autolinking;
 - existencia de config plugin cuando sea necesario;
@@ -869,7 +885,7 @@ salvo que dichas modificaciones puedan generarse automáticamente mediante confi
 
 # 30. EAS Update
 
-Configurar EAS Update.
+EAS Update está configurado con el canal `production`. Como las builds no salen de EAS Build, el canal se fija en `app.config.ts` mediante `updates.requestHeaders` (`expo-channel-name`).
 
 Podrán distribuirse OTA cambios de:
 
@@ -882,7 +898,7 @@ Podrán distribuirse OTA cambios de:
 - consultas SQLite;
 - pantallas.
 
-Cambios que modifiquen runtime nativo requerirán una nueva EAS Build.
+Cambios que modifiquen runtime nativo requieren subir `version` en `app.config.ts` (la política de `runtimeVersion` es `appVersion`) y una nueva build en GitHub Actions instalada con AltStore. Sin ese aumento, una OTA podría requerir código nativo ausente y romper la app.
 
 ---
 
@@ -1071,7 +1087,7 @@ El MVP se considera exitoso cuando:
 - Backup.
 - Restore.
 - Liquid Glass cuando esté soportado.
-- EAS Build.
+- Build en GitHub Actions + instalación con AltStore.
 - EAS Update.
 - AGENTS.md.
 - CLAUDE.md.
@@ -1135,7 +1151,7 @@ Do not introduce unnecessary backend infrastructure, authentication systems, ana
 
 ## Critical Native Development Constraint
 
-This project MUST remain compatible with Expo Continuous Native Generation and EAS Build.
+This project MUST remain compatible with Expo Continuous Native Generation and the GitHub Actions iOS build (`.github/workflows/ios-unsigned.yml`).
 
 The primary development environment is Windows/Linux.
 
@@ -1152,7 +1168,7 @@ Therefore:
 - Prefer Expo SDK packages whenever possible.
 - Native dependencies must support Expo autolinking, config plugins or automatic configuration.
 - All native configuration should live in `app.config.ts` or Expo config plugins.
-- iOS builds must work through EAS Build.
+- iOS builds must work through the GitHub Actions workflow (prebuild + xcodebuild on a macOS runner), installed with AltStore. EAS Build remains a paid fallback.
 - The repository must remain compatible with Expo Continuous Native Generation.
 
 If a feature appears to require custom native iOS code, first investigate whether it can be implemented using:
@@ -1161,7 +1177,7 @@ If a feature appears to require custom native iOS code, first investigate whethe
 2. Expo UI;
 3. Expo Modules;
 4. Expo config plugins;
-5. EAS Build generated native code.
+5. Native code generated by `expo prebuild`.
 
 If it cannot be implemented without requiring the developer to open Xcode, STOP and document the limitation instead of introducing the dependency.
 
@@ -1188,7 +1204,7 @@ Primary stack:
 - expo-sqlite
 - expo-widgets
 - expo-glass-effect
-- EAS Build
+- GitHub Actions + AltStore (builds)
 - EAS Update
 
 Prefer official Expo packages over third-party alternatives.
@@ -1273,7 +1289,7 @@ Deleted expenses must remain recoverable in a trash state for 2 days before perm
 Before adding a dependency verify:
 
 - it supports the current Expo SDK;
-- it works with EAS Build;
+- it works with the GitHub Actions build;
 - it supports Expo CNG;
 - it does not require manual Xcode changes;
 - it is actively maintained;
