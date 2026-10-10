@@ -42,6 +42,10 @@ const config: ExpoConfig = {
   },
   updates: {
     url: 'https://u.expo.dev/342bbce2-9f8b-447f-b4c2-b109546c7584',
+    // Builds come from GitHub Actions, not EAS Build, so the channel is set here.
+    requestHeaders: {
+      'expo-channel-name': 'production',
+    },
   },
   runtimeVersion: {
     policy: 'appVersion',
