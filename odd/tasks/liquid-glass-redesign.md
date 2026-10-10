@@ -21,7 +21,7 @@ Redesign the app UI around iOS 26 liquid glass, using Monzo as the visual refere
 - Adding a native package (expo-symbols) requires a new binary build. OTA alone is not enough.
 
 ## Tasks
-- [ ] T1: Foundation and navigation.
+- [x] T1 (cac6f34): Foundation and navigation.
   - Add a theme module with semantic colors and install expo-symbols.
   - Convert the root layout to NativeTabs (Inicio, Historial, Ajustes) and keep the expense routes as a stack/sheet.
   - Add the "+" header button on Inicio.
