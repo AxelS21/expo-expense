@@ -1,0 +1,92 @@
+# Builds the app for the iOS Simulator and captures screenshots of every main route,
+# in light and dark mode, so UI changes can be checked before publishing an update.
+name: iOS preview screenshots
+
+on:
+  workflow_dispatch:
+  push:
+    branches-ignore: [main]
+    paths:
+      - 'src/**'
+      - 'app.config.ts'
+      - 'package.json'
+      - '.github/workflows/ios-preview.yml'
+
+concurrency:
+  group: ios-preview-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  screenshots:
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate native iOS project
+        run: npx expo prebuild --platform ios --clean
+
+      # The preview must show the embedded bundle from this commit, never an OTA update.
+      - name: Disable expo-updates
+        run: |
+          plist=$(find ios -name Expo.plist -not -path '*/Pods/*' | head -1)
+          test -n "$plist"
+          /usr/libexec/PlistBuddy -c 'Set :EXUpdatesEnabled false' "$plist" \
+            || /usr/libexec/PlistBuddy -c 'Add :EXUpdatesEnabled bool false' "$plist"
+
+      - name: Build for simulator
+        run: |
+          xcodebuild \
+            -workspace ios/Expense.xcworkspace \
+            -scheme Expense \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO | tail -n 50
+
+      - name: Boot simulator
+        run: |
+          udid=$(xcrun simctl list devices available -j \
+            | jq -r '[.devices | to_entries[] | select(.key | test("iOS-26")) | .value[] | select(.name | test("^iPhone [0-9]+ Pro$"))][0].udid')
+          test -n "$udid" && test "$udid" != null
+          echo "UDID=$udid" >> "$GITHUB_ENV"
+          xcrun simctl boot "$udid"
+          xcrun simctl bootstatus "$udid" -b
+          xcrun simctl status_bar "$udid" override --time 9:41 --batteryLevel 100 --cellularBars 4
+          xcrun simctl install "$udid" build/Build/Products/Release-iphonesimulator/Expense.app
+
+      - name: Capture screenshots
+        run: |
+          mkdir -p screenshots
+          bundle_id=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' build/Build/Products/Release-iphonesimulator/Expense.app/Info.plist)
+          routes="home: history:history settings:settings new-expense:expense/new"
+          for appearance in light dark; do
+            xcrun simctl ui "$UDID" appearance "$appearance"
+            xcrun simctl terminate "$UDID" "$bundle_id" || true
+            xcrun simctl launch "$UDID" "$bundle_id"
+            sleep 8
+            for entry in $routes; do
+              name=${entry%%:*}
+              path=${entry#*:}
+              xcrun simctl openurl "$UDID" "expense://$path"
+              sleep 4
+              xcrun simctl io "$UDID" screenshot "screenshots/$appearance-$name.png"
+            done
+          done
+          ls -la screenshots
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-preview-screenshots
+          path: screenshots
+          retention-days: 7
