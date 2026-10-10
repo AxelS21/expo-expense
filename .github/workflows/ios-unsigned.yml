@@ -1,4 +1,4 @@
-# Builds an unsigned iOS .ipa for local re-signing (for example, with Sideloadly and a free Apple ID).
+# Builds an unsigned iOS .ipa for local re-signing with AltStore and a free Apple ID.
 name: iOS unsigned build
 
 on:
