@@ -48,7 +48,7 @@ export default function HomeScreen() {
       )}
 
       <View style={styles.recentHeader}>
-        <Text style={styles.recentTitle}>Ultimos gastos</Text>
+        <Text style={styles.recentTitle}>Últimos gastos</Text>
         <Link href="/history" style={styles.link}>
           Ver todos los gastos
         </Link>
