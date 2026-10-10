@@ -198,7 +198,9 @@ Deep linking should be used to open focused app actions.
 
 Preferred quick-add route:
 
-`expense://new`
+`expense://expense/new` (route file: `src/app/expense/new.tsx`)
+
+Builds and updates follow `docs/release-workflow.md`: JavaScript changes ship via EAS Update; native changes require bumping `version` and a GitHub Actions build installed with AltStore.
 
 ---
 

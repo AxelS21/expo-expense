@@ -451,7 +451,7 @@ Pantalla más importante del producto.
 Debe abrirse directamente mediante:
 
 ```text
-expense://new
+expense://expense/new
 ```
 
 Diseño aproximado:
@@ -572,7 +572,7 @@ Los gráficos, comparaciones entre períodos y analítica avanzada quedan fuera 
 
 No implementar un bloqueo biométrico propio de la aplicación en el MVP ni usar `expo-local-authentication` para ese fin.
 
-Al tocar el widget desde Lock Screen, iOS solicita su desbloqueo normal mediante Face ID, PIN o el mecanismo configurado por el usuario y luego abre `expense://new`. La app no debe solicitar una segunda autenticación.
+Al tocar el widget desde Lock Screen, iOS solicita su desbloqueo normal mediante Face ID, PIN o el mecanismo configurado por el usuario y luego abre `expense://expense/new`. La app no debe solicitar una segunda autenticación.
 
 ---
 
@@ -588,7 +588,7 @@ Objetivo visual:
 Al tocar:
 
 ```text
-expense://new
+expense://expense/new
 ```
 
 La implementación deberá utilizar:
@@ -667,7 +667,7 @@ expense
 Rutas inicialmente necesarias:
 
 ```text
-expense://new
+expense://expense/new
 expense://history
 expense://settings
 ```
@@ -1321,7 +1321,7 @@ Deep linking should be used to open focused app actions.
 
 Preferred quick-add route:
 
-`expense://new`
+`expense://expense/new`
 
 ---
 

@@ -29,11 +29,17 @@ npm test
 
 ## Builds
 
+La app se instala sin cuenta paga de Apple: GitHub Actions compila un `.ipa`, AltStore lo firma con un Apple ID gratuito y EAS Update entrega los cambios de JavaScript.
+
 ```bash
-npx eas-cli build --platform ios --profile preview
+# Cambios de JavaScript (OTA)
+npx eas-cli update --channel production --environment production --platform ios --message "..."
+
+# Cambios nativos: subir version en app.config.ts y compilar
+gh workflow run ios-unsigned.yml --ref main
 ```
 
-Distribucion interna con provisioning Ad Hoc: cada iPhone necesita su UDID registrado.
+Detalle completo, límites y diagnóstico del widget: [docs/release-workflow.md](docs/release-workflow.md).
 
 ## Estructura
 
