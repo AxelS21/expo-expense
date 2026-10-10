@@ -2,15 +2,9 @@
 # in light and dark mode, so UI changes can be checked before publishing an update.
 name: iOS preview screenshots
 
+# Manual only: run it when a batch of features is ready, not on every push.
 on:
   workflow_dispatch:
-  push:
-    branches-ignore: [main]
-    paths:
-      - 'src/**'
-      - 'app.config.ts'
-      - 'package.json'
-      - '.github/workflows/ios-preview.yml'
 
 concurrency:
   group: ios-preview-${{ github.ref }}
