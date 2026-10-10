@@ -16,6 +16,7 @@ import { listActiveCategories } from '@/db/categories.repository';
 import { listExpenses, trashExpense } from '@/db/expenses.repository';
 import { formatAmount } from '@/utils/money';
 import { groupByDay, isWithinRange, periodStart, type QuickPeriod } from '@/utils/date';
+import { colors } from '@/constants/theme';
 import type { Category, Expense } from '@/types/models';
 
 const QUICK_PERIODS: { key: QuickPeriod; label: string }[] = [
@@ -209,50 +210,51 @@ export default function HistoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: colors.systemBackground },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   filterRow: { flexGrow: 0, paddingHorizontal: 16, paddingVertical: 8 },
   chip: {
     paddingVertical: 8,
     paddingHorizontal: 14,
     borderRadius: 16,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: colors.tertiarySystemFill,
     marginRight: 8,
   },
-  chipSelected: { backgroundColor: '#0A84FF' },
-  chipText: { fontSize: 14, fontWeight: '500' },
-  chipTextSelected: { color: '#fff' },
+  chipSelected: { backgroundColor: colors.tint },
+  chipText: { fontSize: 14, fontWeight: '500', color: colors.label },
+  chipTextSelected: { color: colors.onTint },
   rangeRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginBottom: 4 },
   rangeInput: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: colors.tertiarySystemFill,
     borderRadius: 10,
     paddingHorizontal: 10,
     paddingVertical: 8,
     fontSize: 14,
+    color: colors.label,
   },
   list: { paddingHorizontal: 16, paddingBottom: 24 },
   sectionHeader: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#8E8E93',
+    color: colors.secondaryLabel,
     marginTop: 16,
     marginBottom: 4,
   },
-  empty: { color: '#8E8E93', paddingVertical: 24, textAlign: 'center' },
+  empty: { color: colors.secondaryLabel, paddingVertical: 24, textAlign: 'center' },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#E5E5EA',
+    borderBottomColor: colors.separator,
   },
   rowIcon: { fontSize: 20 },
   rowBody: { flex: 1 },
-  rowName: { fontSize: 16 },
-  rowNote: { fontSize: 13, color: '#8E8E93' },
-  rowAmount: { fontSize: 16, fontWeight: '600' },
+  rowName: { fontSize: 16, color: colors.label },
+  rowNote: { fontSize: 13, color: colors.secondaryLabel },
+  rowAmount: { fontSize: 16, fontWeight: '600', color: colors.label },
   trashButton: { paddingLeft: 6 },
   trashIcon: { fontSize: 16 },
 });

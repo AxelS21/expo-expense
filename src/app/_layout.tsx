@@ -4,6 +4,10 @@ import { useEffect } from 'react';
 
 import { registerWidgets } from '@/widgets/register';
 
+export const unstable_settings = {
+  anchor: '(tabs)',
+};
+
 export default function RootLayout() {
   useEffect(() => {
     registerWidgets();
@@ -13,14 +17,12 @@ export default function RootLayout() {
     <>
       <StatusBar style="auto" />
       <Stack>
-        <Stack.Screen name="index" options={{ title: 'Expense' }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="expense/new"
-          options={{ title: 'Nuevo gasto', presentation: 'modal' }}
+          options={{ title: 'Nuevo gasto', presentation: 'formSheet', sheetGrabberVisible: true, sheetAllowedDetents: [1.0] }}
         />
         <Stack.Screen name="expense/[id]" options={{ title: 'Editar gasto' }} />
-        <Stack.Screen name="history" options={{ title: 'Historial' }} />
-        <Stack.Screen name="settings" options={{ title: 'Ajustes' }} />
         <Stack.Screen name="diagnostics" options={{ title: 'Diagnóstico' }} />
       </Stack>
     </>

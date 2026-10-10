@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Link, useFocusEffect } from 'expo-router';
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { Link, Stack, router, useFocusEffect } from 'expo-router';
+import { colors, spacing } from '@/constants/theme';
 import { listActiveCategories } from '@/db/categories.repository';
 import { getMonthlyTotal, listExpenses } from '@/db/expenses.repository';
 import { formatAmount } from '@/utils/money';
@@ -40,6 +41,13 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      <Stack.Toolbar placement="right">
+        <Stack.Toolbar.Button
+          icon="plus"
+          accessibilityLabel="Nuevo gasto"
+          onPress={() => router.push('/expense/new')}
+        />
+      </Stack.Toolbar>
       <Text style={styles.monthLabel}>Este mes</Text>
       {loading ? (
         <ActivityIndicator style={styles.monthLoading} />
@@ -72,57 +80,34 @@ export default function HomeScreen() {
           );
         }}
       />
-
-      <Link href="/expense/new" asChild>
-        <Pressable style={styles.fab} accessibilityRole="button" accessibilityLabel="Nuevo gasto">
-          <Text style={styles.fabText}>+$</Text>
-        </Pressable>
-      </Link>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', padding: 20 },
-  monthLabel: { fontSize: 13, fontWeight: '600', color: '#8E8E93', marginTop: 12 },
-  monthLoading: { alignSelf: 'flex-start', marginTop: 8 },
-  monthTotal: { fontSize: 36, fontWeight: '700', marginTop: 4 },
+  container: { flex: 1, backgroundColor: colors.systemBackground, paddingHorizontal: spacing.xl },
+  monthLabel: { fontSize: 13, fontWeight: '600', color: colors.secondaryLabel, marginTop: spacing.md },
+  monthLoading: { alignSelf: 'flex-start', marginTop: spacing.sm },
+  monthTotal: { fontSize: 36, fontWeight: '700', marginTop: spacing.xs, color: colors.label },
   recentHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 28,
+    marginTop: spacing.xxl,
   },
-  recentTitle: { fontSize: 17, fontWeight: '600' },
-  link: { color: '#0A84FF', fontSize: 14 },
-  list: { paddingTop: 8, gap: 4 },
-  empty: { color: '#8E8E93', paddingVertical: 16 },
+  recentTitle: { fontSize: 17, fontWeight: '600', color: colors.label },
+  link: { color: colors.tint, fontSize: 14 },
+  list: { paddingTop: spacing.sm, gap: spacing.xs },
+  empty: { color: colors.secondaryLabel, paddingVertical: spacing.lg },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#E5E5EA',
+    borderBottomColor: colors.separator,
   },
   rowIcon: { fontSize: 20 },
-  rowName: { flex: 1, fontSize: 16 },
-  rowAmount: { fontSize: 16, fontWeight: '600' },
-  fab: {
-    position: 'absolute',
-    right: 20,
-    bottom: 32,
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: '#0A84FF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 4,
-  },
-  fabText: { color: '#fff', fontSize: 20, fontWeight: '700' },
+  rowName: { flex: 1, fontSize: 16, color: colors.label },
+  rowAmount: { fontSize: 16, fontWeight: '600', color: colors.label },
 });

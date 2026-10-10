@@ -14,6 +14,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { listActiveCategories } from '@/db/categories.repository';
 import { getExpenseById, trashExpense, updateExpense } from '@/db/expenses.repository';
 import { formatAmount, parseAmount } from '@/utils/money';
+import { colors } from '@/constants/theme';
 import type { Category, Expense } from '@/types/models';
 
 export default function EditExpenseScreen() {
@@ -124,7 +125,7 @@ export default function EditExpenseScreen() {
               accessibilityState={{ selected }}
             >
               <Text style={styles.categoryIcon}>{category.icon}</Text>
-              <Text style={styles.categoryName}>{category.name}</Text>
+              <Text style={[styles.categoryName, selected && styles.categoryNameSelected]}>{category.name}</Text>
             </Pressable>
           );
         })}
@@ -157,7 +158,7 @@ export default function EditExpenseScreen() {
         accessibilityLabel="Guardar cambios"
       >
         {saving ? (
-          <ActivityIndicator color="#fff" />
+          <ActivityIndicator color={colors.onTint} />
         ) : (
           <Text style={styles.saveButtonText}>Guardar cambios</Text>
         )}
@@ -176,12 +177,12 @@ export default function EditExpenseScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: colors.systemBackground },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   content: { padding: 20, gap: 8 },
-  label: { fontSize: 13, fontWeight: '600', color: '#8E8E93', marginTop: 16 },
-  amountInput: { fontSize: 44, fontWeight: '700', paddingVertical: 8 },
-  amountPreview: { fontSize: 15, color: '#8E8E93' },
+  label: { fontSize: 13, fontWeight: '600', color: colors.secondaryLabel, marginTop: 16 },
+  amountInput: { fontSize: 44, fontWeight: '700', paddingVertical: 8, color: colors.label },
+  amountPreview: { fontSize: 15, color: colors.secondaryLabel },
   categoryRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 8 },
   categoryChip: {
     flexDirection: 'row',
@@ -190,28 +191,31 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 20,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: colors.tertiarySystemFill,
   },
-  categoryChipSelected: { backgroundColor: '#0A84FF' },
+  categoryChipSelected: { backgroundColor: colors.tint },
   categoryIcon: { fontSize: 18 },
-  categoryName: { fontSize: 15, fontWeight: '500' },
+  categoryName: { fontSize: 15, fontWeight: '500', color: colors.label },
+  categoryNameSelected: { color: colors.onTint },
   dateInput: {
     minHeight: 44,
     borderRadius: 12,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: colors.tertiarySystemFill,
     padding: 12,
     fontSize: 16,
+    color: colors.label,
   },
   noteInput: {
     minHeight: 44,
     borderRadius: 12,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: colors.tertiarySystemFill,
     padding: 12,
     fontSize: 16,
+    color: colors.label,
   },
   saveButton: {
     marginTop: 32,
-    backgroundColor: '#0A84FF',
+    backgroundColor: colors.tint,
     borderRadius: 14,
     paddingVertical: 16,
     alignItems: 'center',
@@ -219,11 +223,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   saveButtonDisabled: { opacity: 0.4 },
-  saveButtonText: { color: '#fff', fontSize: 17, fontWeight: '600' },
+  saveButtonText: { color: colors.onTint, fontSize: 17, fontWeight: '600' },
   deleteButton: {
     marginTop: 16,
     paddingVertical: 14,
     alignItems: 'center',
   },
-  deleteButtonText: { color: '#FF3B30', fontSize: 16, fontWeight: '600' },
+  deleteButtonText: { color: colors.destructive, fontSize: 16, fontWeight: '600' },
 });
