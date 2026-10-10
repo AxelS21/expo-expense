@@ -21,7 +21,7 @@ function readProvisionedAppGroups(): string {
     const match = text.match(
       /<key>com\.apple\.security\.application-groups<\/key>\s*<array>([\s\S]*?)<\/array>/,
     );
-    if (!match) return 'no application-groups entitlement in profile';
+    if (!match?.[1]) return 'no application-groups entitlement in profile';
     const groups = [...match[1].matchAll(/<string>(.*?)<\/string>/g)].map((m) => m[1]);
     return groups.length > 0 ? groups.join(', ') : 'empty application-groups array';
   } catch (error) {
