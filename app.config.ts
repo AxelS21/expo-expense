@@ -17,15 +17,44 @@ const config: ExpoConfig = {
       ITSAppUsesNonExemptEncryption: false,
     },
   },
-  plugins: ['expo-router', 'expo-sqlite', 'expo-sharing'],
+  plugins: [
+    'expo-router',
+    'expo-sqlite',
+    'expo-sharing',
+    [
+      'expo-widgets',
+      {
+        widgets: [
+          {
+            name: 'QuickAddWidget',
+            displayName: 'Nuevo gasto',
+            description: 'Abre el formulario para cargar un gasto.',
+            ios: {
+              supportedFamilies: ['accessoryCircular'],
+            },
+          },
+        ],
+      },
+    ],
+  ],
   experiments: {
     typedRoutes: true,
+  },
+  updates: {
+    url: 'https://u.expo.dev/342bbce2-9f8b-447f-b4c2-b109546c7584',
+  },
+  runtimeVersion: {
+    policy: 'appVersion',
   },
   extra: {
     router: {
       origin: false,
     },
+    eas: {
+      projectId: '342bbce2-9f8b-447f-b4c2-b109546c7584',
+    },
   },
+  owner: 'axels21',
 };
 
 export default config;

@@ -49,3 +49,6 @@ node_modules/
 # Native (CNG genera estos directorios, no se versionan)
 ios/
 android/
+
+# Local agent tooling
+.atl/

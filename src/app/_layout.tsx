@@ -1,7 +1,14 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
+
+import { registerWidgets } from '@/widgets/register';
 
 export default function RootLayout() {
+  useEffect(() => {
+    registerWidgets();
+  }, []);
+
   return (
     <>
       <StatusBar style="auto" />
