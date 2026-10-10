@@ -186,6 +186,13 @@ Use Liquid Glass where supported and appropriate.
 
 Always provide sensible fallbacks for unsupported iOS versions.
 
+Screen layout under native headers:
+
+- Native iOS headers (large titles, and iOS 26 Liquid Glass bars) draw over the content. They do not push it down.
+- The root element of every screen rendered inside a `Stack` must be a `ScrollView`, `FlatList` or `SectionList` with `contentInsetAdjustmentBehavior="automatic"`.
+- Never use a plain `View` as the screen root, and never put fixed content (filters, totals) above the list. Put that content inside the scroll view or in `ListHeaderComponent`.
+- If you skip this, the content renders under the status bar and the header. Neither web nor Android reproduces the bug, so it only shows up on iOS.
+
 Do not add an in-app biometric lock in the MVP. The system's normal Face ID/PIN unlock is sufficient when entering through the Lock Screen widget.
 
 ---

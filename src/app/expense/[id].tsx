@@ -98,6 +98,7 @@ export default function EditExpenseScreen() {
   return (
     <ScrollView
       style={styles.container}
+      contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={styles.content}
       keyboardShouldPersistTaps="handled"
     >

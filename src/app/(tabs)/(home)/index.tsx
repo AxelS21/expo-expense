@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Link, Stack, router, useFocusEffect } from 'expo-router';
 import { colors, spacing } from '@/constants/theme';
 import { listActiveCategories } from '@/db/categories.repository';
@@ -40,7 +40,11 @@ export default function HomeScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.screen}
+      contentContainerStyle={styles.content}
+      contentInsetAdjustmentBehavior="automatic"
+    >
       <Stack.Toolbar placement="right">
         <Stack.Toolbar.Button
           icon="plus"
@@ -62,15 +66,14 @@ export default function HomeScreen() {
         </Link>
       </View>
 
-      <FlatList
-        data={recent}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        ListEmptyComponent={!loading ? <Text style={styles.empty}>Sin gastos todavia</Text> : null}
-        renderItem={({ item }) => {
+      <View style={styles.list}>
+        {!loading && recent.length === 0 ? (
+          <Text style={styles.empty}>Sin gastos todavia</Text>
+        ) : null}
+        {recent.map((item) => {
           const category = categoriesById[item.categoryId];
           return (
-            <View style={styles.row}>
+            <View key={item.id} style={styles.row}>
               <Text style={styles.rowIcon}>{category?.icon ?? '•'}</Text>
               <Text style={styles.rowName} numberOfLines={1}>
                 {category?.name ?? 'Sin categoria'}
@@ -78,14 +81,15 @@ export default function HomeScreen() {
               <Text style={styles.rowAmount}>{formatAmount(item.amount)}</Text>
             </View>
           );
-        }}
-      />
-    </View>
+        })}
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.systemBackground, paddingHorizontal: spacing.xl },
+  screen: { flex: 1, backgroundColor: colors.systemBackground },
+  content: { paddingHorizontal: spacing.xl, paddingBottom: spacing.xxl },
   monthLabel: { fontSize: 13, fontWeight: '600', color: colors.secondaryLabel, marginTop: spacing.md },
   monthLoading: { alignSelf: 'flex-start', marginTop: spacing.sm },
   monthTotal: { fontSize: 36, fontWeight: '700', marginTop: spacing.xs, color: colors.label },

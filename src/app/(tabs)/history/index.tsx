@@ -98,8 +98,8 @@ export default function HistoryScreen() {
     );
   }
 
-  return (
-    <View style={styles.container}>
+  const filters = (
+    <>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow}>
         {QUICK_PERIODS.map((option) => (
           <Pressable
@@ -164,48 +164,53 @@ export default function HistoryScreen() {
           </Pressable>
         ))}
       </ScrollView>
+    </>
+  );
 
-      <SectionList
-        sections={sections}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
-        ListEmptyComponent={<Text style={styles.empty}>Sin gastos en este periodo</Text>}
-        renderItem={({ item }) => {
-          const category = categoriesById[item.categoryId];
-          return (
-            <Pressable
-              style={styles.row}
-              onPress={() => router.push(`/expense/${item.id}`)}
-              accessibilityRole="button"
-              accessibilityLabel={`Editar gasto ${category?.name ?? ''} ${formatAmount(item.amount)}`}
-            >
-              <Text style={styles.rowIcon}>{category?.icon ?? '•'}</Text>
-              <View style={styles.rowBody}>
-                <Text style={styles.rowName} numberOfLines={1}>
-                  {category?.name ?? 'Sin categoria'}
+  return (
+    <SectionList
+      style={styles.container}
+      contentInsetAdjustmentBehavior="automatic"
+      ListHeaderComponent={filters}
+      sections={sections}
+      keyExtractor={(item) => item.id}
+      contentContainerStyle={styles.list}
+      renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
+      ListEmptyComponent={<Text style={styles.empty}>Sin gastos en este periodo</Text>}
+      renderItem={({ item }) => {
+        const category = categoriesById[item.categoryId];
+        return (
+          <Pressable
+            style={styles.row}
+            onPress={() => router.push(`/expense/${item.id}`)}
+            accessibilityRole="button"
+            accessibilityLabel={`Editar gasto ${category?.name ?? ''} ${formatAmount(item.amount)}`}
+          >
+            <Text style={styles.rowIcon}>{category?.icon ?? '•'}</Text>
+            <View style={styles.rowBody}>
+              <Text style={styles.rowName} numberOfLines={1}>
+                {category?.name ?? 'Sin categoria'}
+              </Text>
+              {item.note ? (
+                <Text style={styles.rowNote} numberOfLines={1}>
+                  {item.note}
                 </Text>
-                {item.note ? (
-                  <Text style={styles.rowNote} numberOfLines={1}>
-                    {item.note}
-                  </Text>
-                ) : null}
-              </View>
-              <Text style={styles.rowAmount}>{formatAmount(item.amount)}</Text>
-              <Pressable
-                onPress={() => handleTrash(item)}
-                hitSlop={10}
-                accessibilityRole="button"
-                accessibilityLabel="Eliminar gasto"
-                style={styles.trashButton}
-              >
-                <Text style={styles.trashIcon}>🗑</Text>
-              </Pressable>
+              ) : null}
+            </View>
+            <Text style={styles.rowAmount}>{formatAmount(item.amount)}</Text>
+            <Pressable
+              onPress={() => handleTrash(item)}
+              hitSlop={10}
+              accessibilityRole="button"
+              accessibilityLabel="Eliminar gasto"
+              style={styles.trashButton}
+            >
+              <Text style={styles.trashIcon}>🗑</Text>
             </Pressable>
-          );
-        }}
-      />
-    </View>
+          </Pressable>
+        );
+      }}
+    />
   );
 }
 
