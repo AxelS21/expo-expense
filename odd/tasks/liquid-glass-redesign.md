@@ -43,3 +43,9 @@ Redesign the app UI around iOS 26 liquid glass, using Monzo as the visual refere
 ## Progress
 - T1 route: delegated (writer touches 2+ non-trivial files).
 - T1 review: medium risk, consent granted, 1 lens (reliability) approved and acknowledged. Reviewed boundary advances to 4d25dfc.
+- T1 done (cac6f34).
+  - NativeTabs come from `expo-router/unstable-native-tabs`.
+  - The "+" button uses `Stack.Toolbar.Button icon="plus"`.
+  - `theme.ts` uses PlatformColor.
+  - Removed expo-symbols: it was unused, because SF Symbol names are passed directly. T1 adds no native modules, so it can ship by OTA.
+  - Checks: tsc and expo export ios passed (writer run), and the parent re-ran tsc and it passed. `expo install --check` fails on 12 pre-existing outdated packages, which are out of scope. Device check is pending.
