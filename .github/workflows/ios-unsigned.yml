@@ -3,6 +3,11 @@ name: iOS unsigned build
 
 on:
   workflow_dispatch:
+    inputs:
+      team_id:
+        description: Apple team ID that AltStore signs with (it appends it to the App Group)
+        default: LSLLT984X3
+        required: true
 
 jobs:
   build:
@@ -21,6 +26,20 @@ jobs:
 
       - name: Generate native iOS project
         run: npx expo prebuild --platform ios --clean
+
+      # AltStore registers App Groups as "<group>.<teamID>" and updates the entitlements,
+      # but not the Info.plist key expo-widgets reads, so the app and widget stop sharing data.
+      - name: Match widget App Group to AltStore signing
+        env:
+          TEAM_ID: ${{ inputs.team_id }}
+        run: |
+          plists=$(grep -rl --include=Info.plist ExpoWidgetsAppGroupIdentifier ios)
+          test -n "$plists"
+          for plist in $plists; do
+            group=$(/usr/libexec/PlistBuddy -c 'Print :ExpoWidgetsAppGroupIdentifier' "$plist")
+            /usr/libexec/PlistBuddy -c "Set :ExpoWidgetsAppGroupIdentifier $group.$TEAM_ID" "$plist"
+            echo "$plist -> $group.$TEAM_ID"
+          done
 
       - name: Build app without code signing
         run: |
