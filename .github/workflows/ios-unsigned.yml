@@ -54,6 +54,25 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY=""
 
+      # Entitlements only travel inside a code signature. Without one, AltStore sees no
+      # App Groups to register. Ad-hoc signing embeds them without any Apple certificate.
+      - name: Embed entitlements with ad-hoc signature
+        run: |
+          app=build/Build/Products/Release-iphoneos/Expense.app
+          appex="$app/PlugIns/ExpoWidgetsTarget.appex"
+          app_ent=$(find ios/Expense -maxdepth 1 -name '*.entitlements' | head -1)
+          appex_ent=$(find ios/ExpoWidgetsTarget -maxdepth 1 -name '*.entitlements' | head -1)
+          test -n "$app_ent" && test -n "$appex_ent"
+          echo "App entitlements: $app_ent" && cat "$app_ent"
+          echo "Widget entitlements: $appex_ent" && cat "$appex_ent"
+          # Nested code must be signed before the bundles that contain it.
+          find "$app" -depth \( -name '*.dylib' -o -name '*.framework' \) -print0 \
+            | xargs -0 -I{} codesign --force --sign - {}
+          codesign --force --sign - --entitlements "$appex_ent" "$appex"
+          codesign --force --sign - --entitlements "$app_ent" "$app"
+          codesign -d --entitlements - "$appex"
+          codesign -d --entitlements - "$app"
+
       - name: Package .ipa
         run: |
           mkdir Payload
