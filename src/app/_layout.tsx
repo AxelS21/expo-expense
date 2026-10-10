@@ -21,6 +21,7 @@ export default function RootLayout() {
         <Stack.Screen name="expense/[id]" options={{ title: 'Editar gasto' }} />
         <Stack.Screen name="history" options={{ title: 'Historial' }} />
         <Stack.Screen name="settings" options={{ title: 'Ajustes' }} />
+        <Stack.Screen name="diagnostics" options={{ title: 'Diagnóstico' }} />
       </Stack>
     </>
   );
