@@ -6,7 +6,28 @@ export type WidgetDiagnostics = {
   error?: string;
   widgetsDirectory?: string | null;
   timeline?: string;
+  provisionedAppGroups?: string;
 };
+
+// The signed provisioning profile embeds an XML plist; read the App Groups it grants.
+function readProvisionedAppGroups(): string {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { File, Paths } = require('expo-file-system') as typeof import('expo-file-system');
+    const bytes = new File(Paths.bundle, 'embedded.mobileprovision').bytesSync();
+    let text = '';
+    for (const byte of bytes) text += String.fromCharCode(byte);
+
+    const match = text.match(
+      /<key>com\.apple\.security\.application-groups<\/key>\s*<array>([\s\S]*?)<\/array>/,
+    );
+    if (!match) return 'no application-groups entitlement in profile';
+    const groups = [...match[1].matchAll(/<string>(.*?)<\/string>/g)].map((m) => m[1]);
+    return groups.length > 0 ? groups.join(', ') : 'empty application-groups array';
+  } catch (error) {
+    return `error: ${describeError(error)}`;
+  }
+}
 
 let diagnostics: WidgetDiagnostics = { status: 'skipped' };
 
@@ -27,7 +48,11 @@ export function registerWidgets(): void {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { requireNativeModule } = require('expo') as typeof import('expo');
     const nativeModule = requireNativeModule<{ widgetsDirectory?: string | null }>('ExpoWidgets');
-    diagnostics = { status: 'registered', widgetsDirectory: nativeModule.widgetsDirectory ?? null };
+    diagnostics = {
+      status: 'registered',
+      widgetsDirectory: nativeModule.widgetsDirectory ?? null,
+      provisionedAppGroups: readProvisionedAppGroups(),
+    };
 
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { default: quickAddWidget } = require('./QuickAddWidget') as typeof import('./QuickAddWidget');
