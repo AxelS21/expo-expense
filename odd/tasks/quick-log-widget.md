@@ -34,3 +34,4 @@ Log an expense from the lock screen without opening the app. The widget offers p
 
 ## Progress
 - W1+W2 done (delegated writer). expo install --check OK, expo-doctor 21/21, jest 56, tsc OK, export ios OK. Lockfile: expo-modules-core entry hoisted by hand (npm nested it). Version 1.1.0.
+- W3: unsigned build success (run 38106460541), preview run success (38106462200). Screenshots: app launches in light and dark and Home renders correctly. Other routes are blocked by the iOS "Open in Expense?" dialog that simctl openurl triggers (workflow limitation). The widget cannot be checked in screenshots. Pending: user installs the .ipa with AltStore.
