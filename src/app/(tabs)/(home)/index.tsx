@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Link, Stack, router, useFocusEffect } from 'expo-router';
+import * as Updates from 'expo-updates';
+import { RELEASE_LABEL } from '@/constants/release';
 import { colors, spacing } from '@/constants/theme';
 import { listActiveCategories } from '@/db/categories.repository';
 import { getMonthlyTotal, listExpenses } from '@/db/expenses.repository';
@@ -83,6 +85,9 @@ export default function HomeScreen() {
           );
         })}
       </View>
+      <Text style={styles.release}>
+        v{RELEASE_LABEL} · {Updates.isEmbeddedLaunch ? 'build' : 'OTA'}
+      </Text>
     </ScrollView>
   );
 }
@@ -102,6 +107,12 @@ const styles = StyleSheet.create({
   recentTitle: { fontSize: 17, fontWeight: '600', color: colors.label },
   link: { color: colors.tint, fontSize: 14 },
   list: { paddingTop: spacing.sm, gap: spacing.xs },
+  release: {
+    marginTop: spacing.xxl,
+    textAlign: 'center',
+    fontSize: 12,
+    color: colors.tertiaryLabel,
+  },
   empty: { color: colors.secondaryLabel, paddingVertical: spacing.lg },
   row: {
     flexDirection: 'row',
