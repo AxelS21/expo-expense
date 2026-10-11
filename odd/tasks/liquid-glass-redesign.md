@@ -52,3 +52,4 @@ Redesign the app UI around iOS 26 liquid glass, using Monzo as the visual refere
 - Palette fix + version in Ajustes: OTA 1.0.003 (12ce9e2f). Review: high (workflow shell), declined by user for this candidate.
 - T2 done (delegated writer): shared ExpenseForm + AmountKeypad, date pill with day stepper + @expo/ui DatePicker (unverified on device), xmark/trash toolbar buttons. Checks: tsc, no hex lint, no package changes, expo export ios OK. OTA 1.0.004.
 - Fix: edit and diagnostics moved into the history/settings tab stacks (back label was "(tabs)", header light). OTA 1.0.005.
+- Fix: inline-title header rendered opaque white (glass buttons light). All stacks now headerTransparent; OTA 1.0.006.

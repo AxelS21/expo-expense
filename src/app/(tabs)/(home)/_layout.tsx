@@ -12,6 +12,7 @@ export default function Layout() {
         headerTitleStyle: { color: colors.label },
         headerLargeTitleStyle: { color: colors.label },
         headerTintColor: colors.tint,
+        headerTransparent: true,
       }}
     >
       <Stack.Screen name="index" options={{ title: 'Inicio' }} />
