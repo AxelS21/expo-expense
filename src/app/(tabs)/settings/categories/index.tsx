@@ -1,4 +1,4 @@
-import { Link, Stack, router, useFocusEffect } from 'expo-router';
+import { Stack, router, useFocusEffect } from 'expo-router';
 import { Fragment, useCallback, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -26,19 +26,18 @@ export default function CategoriesScreen() {
         {items.map((category, index) => (
           <Fragment key={category.id}>
             {index > 0 && <View style={styles.separator} />}
-            <Link href={`/settings/categories/${category.id}`} asChild>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={`Editar ${category.name}`}
-                style={({ pressed }) => [styles.row, pressed && styles.pressed]}
-              >
-                <Text style={styles.icon}>{category.icon}</Text>
-                <Text style={[styles.name, category.isArchived && styles.archivedName]} numberOfLines={1}>
-                  {category.name}
-                </Text>
-                <Text style={styles.chevron}>›</Text>
-              </Pressable>
-            </Link>
+            <Pressable
+              onPress={() => router.push(`/settings/categories/${category.id}`)}
+              accessibilityRole="button"
+              accessibilityLabel={`Editar ${category.name}`}
+              style={({ pressed }) => [styles.row, pressed && styles.pressed]}
+            >
+              <Text style={styles.icon}>{category.icon}</Text>
+              <Text style={[styles.name, category.isArchived && styles.archivedName]} numberOfLines={1}>
+                {category.name}
+              </Text>
+              <Text style={styles.chevron}>›</Text>
+            </Pressable>
           </Fragment>
         ))}
       </View>

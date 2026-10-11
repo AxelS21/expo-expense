@@ -195,6 +195,8 @@ Screen layout under native headers:
 
 Pushed detail screens (edit expense, diagnostics) belong in their tab's own Stack, under `src/app/(tabs)/<tab>/`. They do not belong in the root Stack. When pushed on the root Stack, the back button reads "(tabs)" and the header ignores the app's theme. Only modal sheets such as `expense/new` belong in the root Stack.
 
+Never wrap a `Pressable` whose `style` is a function (`({ pressed }) => ...`) in `<Link asChild>`. The expo-router Slot merges styles by spreading objects, and spreading a function yields `{}`, so the row loses all of its styles. Use `Pressable` with `onPress={() => router.push(...)}` instead.
+
 Do not add an in-app biometric lock in the MVP. The system's normal Face ID/PIN unlock is sufficient when entering through the Lock Screen widget.
 
 ---

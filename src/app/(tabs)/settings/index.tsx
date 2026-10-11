@@ -1,5 +1,5 @@
 import * as Haptics from 'expo-haptics';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import * as Updates from 'expo-updates';
 import { useMemo, useState } from 'react';
 import {
@@ -116,15 +116,14 @@ export default function SettingsScreen() {
 
       <Text style={styles.sectionHeader}>Gastos</Text>
       <View style={styles.group}>
-        <Link href="/settings/categories" asChild>
-          <Pressable
-            accessibilityRole="button"
-            style={({ pressed }) => [styles.valueRow, pressed && styles.pressed]}
-          >
-            <Text style={styles.rowText}>Categorías</Text>
-            <Text style={styles.rowValue}>›</Text>
-          </Pressable>
-        </Link>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push('/settings/categories')}
+          style={({ pressed }) => [styles.valueRow, pressed && styles.pressed]}
+        >
+          <Text style={styles.rowText}>Categorías</Text>
+          <Text style={styles.rowValue}>›</Text>
+        </Pressable>
       </View>
 
       <Text style={styles.sectionHeader}>Datos</Text>
