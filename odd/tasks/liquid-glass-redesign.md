@@ -56,3 +56,4 @@ Redesign the app UI around iOS 26 liquid glass, using Monzo as the visual refere
 - T3 done (delegated writer): home hero/category/recent cards, history day cards with totals, Link.Menu context menu delete (no gesture-handler), shared ExpenseRow, aggregate util + test. Checks: tsc, jest 14 passing, no hex, no package changes, export ios OK. OTA 1.0.007.
 - T3 review: high (workflow shell), declined by user for this candidate.
 - Fix: UTC date bucketing (month totals via local range, edit day via localDayKey/withLocalDay). RED 6 failing -> GREEN 21 passing. OTA 1.0.008.
+- Date fix review: declined by user for this candidate.
