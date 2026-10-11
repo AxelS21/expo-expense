@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import {
   ActivityIndicator,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -9,13 +8,12 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { DatePicker, Host } from '@expo/ui/swift-ui';
-import { datePickerStyle } from '@expo/ui/swift-ui/modifiers';
+import { DatePickerPanel } from '@/components/DatePickerPanel';
 import { type ThemeColors, radius, spacing, useTheme } from '@/constants/theme';
 import { amountFromKeypad, formatAmount, type Amount } from '@/utils/money';
 import type { Category } from '@/types/models';
 import { AmountKeypad } from './AmountKeypad';
-import { dateFromDayKey, dayKeyFromDate, formatDayLabel, shiftDayKey, todayKey } from './expenseDate';
+import { formatDayLabel, todayKey } from './expenseDate';
 
 export interface ExpenseFormValues {
   amount: Amount;
@@ -57,7 +55,6 @@ export function ExpenseForm({
 
   const amount = amountFromKeypad(keypad);
   const canSave = amount !== null && categoryId !== null && !saving;
-  const isToday = dayKey === todayKey();
   const amountText = formatAmount(amount ?? 0);
   const trimmedNote = note.trim();
 
@@ -130,42 +127,7 @@ export function ExpenseForm({
         )}
       </View>
 
-      {datePanelOpen && (
-        <View style={styles.datePanel}>
-          <View style={styles.stepperRow}>
-            <Pressable
-              style={styles.stepperButton}
-              onPress={() => setDayKey((key) => shiftDayKey(key, -1))}
-              accessibilityRole="button"
-              accessibilityLabel="Día anterior"
-            >
-              <Text style={styles.stepperGlyph}>‹</Text>
-            </Pressable>
-            <Text style={styles.stepperLabel}>{formatDayLabel(dayKey)}</Text>
-            <Pressable
-              style={[styles.stepperButton, isToday && styles.disabled]}
-              onPress={() => setDayKey((key) => shiftDayKey(key, 1))}
-              disabled={isToday}
-              accessibilityRole="button"
-              accessibilityLabel="Día siguiente"
-              accessibilityState={{ disabled: isToday }}
-            >
-              <Text style={styles.stepperGlyph}>›</Text>
-            </Pressable>
-          </View>
-          {Platform.OS === 'ios' && (
-            <Host matchContents>
-              <DatePicker
-                selection={dateFromDayKey(dayKey)}
-                range={{ end: new Date() }}
-                displayedComponents={['date']}
-                onDateChange={(date) => setDayKey(dayKeyFromDate(date))}
-                modifiers={[datePickerStyle('graphical')]}
-              />
-            </Host>
-          )}
-        </View>
-      )}
+      {datePanelOpen && <DatePickerPanel dayKey={dayKey} onChange={setDayKey} />}
 
       <ScrollView
         horizontal
@@ -240,18 +202,6 @@ function createStyles(colors: ThemeColors) {
     pillIcon: { fontSize: 15, color: colors.secondaryLabel },
     pillText: { fontSize: 15, fontWeight: '500', color: colors.label, flexShrink: 1 },
     pillTextMuted: { color: colors.secondaryLabel },
-    datePanel: { borderRadius: radius.lg, backgroundColor: colors.surface, padding: spacing.md, gap: spacing.sm },
-    stepperRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-    stepperButton: {
-      minWidth: 44,
-      minHeight: 44,
-      borderRadius: radius.pill,
-      backgroundColor: colors.fill,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    stepperGlyph: { fontSize: 24, color: colors.tint, fontWeight: '600' },
-    stepperLabel: { fontSize: 17, fontWeight: '600', color: colors.label },
     categoryRow: { gap: spacing.sm },
     categoryChip: {
       flexDirection: 'row',

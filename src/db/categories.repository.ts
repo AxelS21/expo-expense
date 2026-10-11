@@ -58,10 +58,13 @@ export async function findCategoryByName(name: string): Promise<Category | null>
   return match ? fromRow(match) : null;
 }
 
+/** Palette cycled for categories created in the app, so screens never hardcode colors. */
+const NEW_CATEGORY_COLORS = ['#FF9F0A', '#30D158', '#0A84FF', '#BF5AF2', '#FF375F', '#64D2FF', '#FFD60A'];
+
 export async function createCategory(input: {
   name: string;
   icon: string;
-  color: string;
+  color?: string;
 }): Promise<Category> {
   const existing = await findCategoryByName(input.name);
   if (existing) {
@@ -73,12 +76,14 @@ export async function createCategory(input: {
     'SELECT MAX(sort_order) as maxOrder FROM categories'
   )) ?? { maxOrder: null };
 
+  const nextOrder = (maxOrder ?? -1) + 1;
+  const color = input.color ?? NEW_CATEGORY_COLORS[nextOrder % NEW_CATEGORY_COLORS.length] ?? '#0A84FF';
   const now = new Date().toISOString();
   const id = randomUUID();
   await db.runAsync(
     `INSERT INTO categories (id, name, icon, color, sort_order, is_archived, created_at, updated_at)
      VALUES (?, ?, ?, ?, ?, 0, ?, ?)`,
-    [id, input.name.trim(), input.icon, input.color, (maxOrder ?? -1) + 1, now, now]
+    [id, input.name.trim(), input.icon, color, nextOrder, now, now]
   );
 
   const created = await getCategoryById(id);

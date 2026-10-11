@@ -121,3 +121,20 @@ export function withLocalDay(iso: string, dayKey: string): string {
   target.setHours(source.getHours(), source.getMinutes(), source.getSeconds(), source.getMilliseconds());
   return target.toISOString();
 }
+
+/** "YYYY-MM-01" local day key for the first day of `date`'s month. */
+export function monthStartDayKey(date: Date): string {
+  return toDayKey(new Date(date.getFullYear(), date.getMonth(), 1));
+}
+
+/**
+ * Keeps a "YYYY-MM-DD" range ordered after one end changes: the other end is
+ * pulled along so `from` never ends up after `to`.
+ */
+export function clampDayRange(
+  range: { from: string; to: string },
+  edited: 'from' | 'to'
+): { from: string; to: string } {
+  if (range.from <= range.to) return range;
+  return edited === 'from' ? { from: range.from, to: range.from } : { from: range.to, to: range.to };
+}

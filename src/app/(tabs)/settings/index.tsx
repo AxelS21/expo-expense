@@ -114,6 +114,19 @@ export default function SettingsScreen() {
         <Text style={styles.rowText}>Diagnóstico del widget</Text>
       </Link>
 
+      <Text style={styles.sectionHeader}>Gastos</Text>
+      <View style={styles.group}>
+        <Link href="/settings/categories" asChild>
+          <Pressable
+            accessibilityRole="button"
+            style={({ pressed }) => [styles.valueRow, pressed && styles.pressed]}
+          >
+            <Text style={styles.rowText}>Categorías</Text>
+            <Text style={styles.rowValue}>›</Text>
+          </Pressable>
+        </Link>
+      </View>
+
       <Text style={styles.sectionHeader}>Datos</Text>
       <View style={styles.group}>
         <Pressable

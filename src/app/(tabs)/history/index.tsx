@@ -8,7 +8,6 @@ import {
   SectionList,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
@@ -18,7 +17,16 @@ import { listActiveCategories } from '@/db/categories.repository';
 import { listExpenses, trashExpense } from '@/db/expenses.repository';
 import { formatAmount } from '@/utils/money';
 import { sumAmounts } from '@/utils/aggregate';
-import { groupByDay, isWithinRange, periodStart, type QuickPeriod } from '@/utils/date';
+import {
+  clampDayRange,
+  groupByDay,
+  isWithinRange,
+  monthStartDayKey,
+  periodStart,
+  type QuickPeriod,
+} from '@/utils/date';
+import { DatePickerPanel } from '@/components/DatePickerPanel';
+import { dateFromDayKey, todayKey } from '@/components/expenses/expenseDate';
 import { type ThemeColors, radius, spacing, useTheme } from '@/constants/theme';
 import type { Category, Expense } from '@/types/models';
 
@@ -29,6 +37,21 @@ const QUICK_PERIODS: { key: QuickPeriod; label: string }[] = [
   { key: 'all', label: 'Todos' },
 ];
 
+type RangeEnd = 'from' | 'to';
+
+const RANGE_ENDS: { end: RangeEnd; label: string }[] = [
+  { end: 'from', label: 'Desde' },
+  { end: 'to', label: 'Hasta' },
+];
+
+/** "hoy" or a compact Spanish day such as "1 oct". */
+function rangeDayText(dayKey: string): string {
+  if (dayKey === todayKey()) return 'hoy';
+  return new Intl.DateTimeFormat('es-AR', { day: 'numeric', month: 'short' })
+    .format(dateFromDayKey(dayKey))
+    .replace('.', '');
+}
+
 export default function HistoryScreen() {
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
@@ -37,9 +60,16 @@ export default function HistoryScreen() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [period, setPeriod] = useState<QuickPeriod>('month');
   const [categoryId, setCategoryId] = useState<string | null>(null);
-  const [customFrom, setCustomFrom] = useState('');
-  const [customTo, setCustomTo] = useState('');
+  const [customRange, setCustomRange] = useState(() => ({
+    from: monthStartDayKey(new Date()),
+    to: todayKey(),
+  }));
+  const [editingEnd, setEditingEnd] = useState<RangeEnd | null>(null);
   const [showCustomRange, setShowCustomRange] = useState(false);
+
+  function changeRangeEnd(end: RangeEnd, dayKey: string) {
+    setCustomRange((range) => clampDayRange({ ...range, [end]: dayKey }, end));
+  }
 
   const categoriesById = useMemo(
     () => Object.fromEntries(categories.map((c) => [c.id, c])),
@@ -63,13 +93,14 @@ export default function HistoryScreen() {
   );
 
   const filtered = useMemo(() => {
-    const from = showCustomRange ? customFrom || null : periodStart(period)?.toISOString() ?? null;
-    const to = showCustomRange ? customTo || null : null;
+    // Day keys make isWithinRange use local start of `from` and local end of `to`.
+    const from = showCustomRange ? customRange.from : periodStart(period)?.toISOString() ?? null;
+    const to = showCustomRange ? customRange.to : null;
     return expenses.filter((expense) => {
       if (categoryId && expense.categoryId !== categoryId) return false;
       return isWithinRange(expense.expenseDate, from, to);
     });
-  }, [expenses, categoryId, period, showCustomRange, customFrom, customTo]);
+  }, [expenses, categoryId, period, showCustomRange, customRange]);
 
   const sections = useMemo(
     () =>
@@ -144,21 +175,32 @@ export default function HistoryScreen() {
       </ScrollView>
 
       {showCustomRange && (
-        <View style={styles.rangeRow}>
-          <TextInput
-            style={styles.rangeInput}
-            placeholderTextColor={colors.tertiaryLabel}
-            placeholder="Desde AAAA-MM-DD"
-            value={customFrom}
-            onChangeText={setCustomFrom}
-          />
-          <TextInput
-            style={styles.rangeInput}
-            placeholderTextColor={colors.tertiaryLabel}
-            placeholder="Hasta AAAA-MM-DD"
-            value={customTo}
-            onChangeText={setCustomTo}
-          />
+        <View style={styles.rangeBlock}>
+          <View style={styles.rangeRow}>
+            {RANGE_ENDS.map(({ end, label }) => {
+              const active = editingEnd === end;
+              const dayText = rangeDayText(customRange[end]);
+              return (
+                <Pressable
+                  key={end}
+                  style={[styles.rangePill, active && styles.rangePillActive]}
+                  onPress={() => setEditingEnd((current) => (current === end ? null : end))}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${label}: ${dayText}`}
+                  accessibilityState={{ expanded: active }}
+                >
+                  <Text style={styles.rangePillLabel}>{label}</Text>
+                  <Text style={styles.rangePillValue}>{dayText}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+          {editingEnd && (
+            <DatePickerPanel
+              dayKey={customRange[editingEnd]}
+              onChange={(dayKey) => changeRangeEnd(editingEnd, dayKey)}
+            />
+          )}
         </View>
       )}
 
@@ -263,21 +305,22 @@ function createStyles(colors: ThemeColors) {
     chipSelected: { backgroundColor: colors.tint },
     chipText: { fontSize: 14, fontWeight: '500', color: colors.label },
     chipTextSelected: { color: colors.onTint },
-    rangeRow: {
-      flexDirection: 'row',
-      gap: spacing.sm,
-      paddingHorizontal: spacing.lg,
-      marginVertical: spacing.xs,
-    },
-    rangeInput: {
+    rangeBlock: { paddingHorizontal: spacing.lg, marginVertical: spacing.xs, gap: spacing.sm },
+    rangeRow: { flexDirection: 'row', gap: spacing.sm },
+    rangePill: {
       flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: spacing.xs,
+      minHeight: 44,
+      paddingHorizontal: spacing.md,
+      borderRadius: radius.pill,
       backgroundColor: colors.fill,
-      borderRadius: radius.md,
-      paddingHorizontal: 10,
-      paddingVertical: spacing.sm,
-      fontSize: 14,
-      color: colors.label,
     },
+    rangePillActive: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.tint },
+    rangePillLabel: { fontSize: 14, color: colors.secondaryLabel },
+    rangePillValue: { fontSize: 14, fontWeight: '600', color: colors.label },
     list: { paddingBottom: spacing.xxl },
     sectionHeader: {
       flexDirection: 'row',

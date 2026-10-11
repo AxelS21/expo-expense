@@ -16,7 +16,9 @@ export default function Layout() {
       }}
     >
       <Stack.Screen name="index" options={{ title: 'Ajustes' }} />
-      <Stack.Screen name="diagnostics" options={{ title: 'Diagnóstico', headerLargeTitle: false }} />
+      <Stack.Screen name="categories/index" options={{ title: 'Categorías' }} />
+      <Stack.Screen name="categories/[id]" options={{ title: 'Categoría', headerLargeTitle: false }} />
+      <Stack.Screen name="diagnostics"options={{ title: 'Diagnóstico', headerLargeTitle: false }} />
     </Stack>
   );
 }
