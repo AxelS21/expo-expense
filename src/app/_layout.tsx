@@ -2,6 +2,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
+import { UpdateBanner } from '@/components/ui/UpdateBanner';
 import { useTheme } from '@/constants/theme';
 import { registerWidgets } from '@/widgets/register';
 
@@ -33,6 +34,7 @@ export default function RootLayout() {
           options={{ title: 'Nuevo gasto', presentation: 'formSheet', sheetGrabberVisible: true, sheetAllowedDetents: [1.0] }}
         />
       </Stack>
+      <UpdateBanner />
     </>
   );
 }
