@@ -54,3 +54,4 @@ Redesign the app UI around iOS 26 liquid glass, using Monzo as the visual refere
 - Fix: edit and diagnostics moved into the history/settings tab stacks (back label was "(tabs)", header light). OTA 1.0.005.
 - Fix: inline-title header rendered opaque white (glass buttons light). All stacks now headerTransparent; OTA 1.0.006.
 - T3 done (delegated writer): home hero/category/recent cards, history day cards with totals, Link.Menu context menu delete (no gesture-handler), shared ExpenseRow, aggregate util + test. Checks: tsc, jest 14 passing, no hex, no package changes, export ios OK. OTA 1.0.007.
+- T3 review: high (workflow shell), declined by user for this candidate.
