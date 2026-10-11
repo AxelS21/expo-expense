@@ -16,7 +16,7 @@ import { listActiveCategories } from '@/db/categories.repository';
 import { listExpenses, trashExpense } from '@/db/expenses.repository';
 import { formatAmount } from '@/utils/money';
 import { groupByDay, isWithinRange, periodStart, type QuickPeriod } from '@/utils/date';
-import { colors } from '@/constants/theme';
+import { type ThemeColors, useTheme  } from '@/constants/theme';
 import type { Category, Expense } from '@/types/models';
 
 const QUICK_PERIODS: { key: QuickPeriod; label: string }[] = [
@@ -27,6 +27,8 @@ const QUICK_PERIODS: { key: QuickPeriod; label: string }[] = [
 ];
 
 export default function HistoryScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [loading, setLoading] = useState(true);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -130,12 +132,14 @@ export default function HistoryScreen() {
         <View style={styles.rangeRow}>
           <TextInput
             style={styles.rangeInput}
+            placeholderTextColor={colors.tertiaryLabel}
             placeholder="Desde AAAA-MM-DD"
             value={customFrom}
             onChangeText={setCustomFrom}
           />
           <TextInput
             style={styles.rangeInput}
+            placeholderTextColor={colors.tertiaryLabel}
             placeholder="Hasta AAAA-MM-DD"
             value={customTo}
             onChangeText={setCustomTo}
@@ -214,52 +218,54 @@ export default function HistoryScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.systemBackground },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  filterRow: { flexGrow: 0, paddingHorizontal: 16, paddingVertical: 8 },
-  chip: {
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderRadius: 16,
-    backgroundColor: colors.tertiarySystemFill,
-    marginRight: 8,
-  },
-  chipSelected: { backgroundColor: colors.tint },
-  chipText: { fontSize: 14, fontWeight: '500', color: colors.label },
-  chipTextSelected: { color: colors.onTint },
-  rangeRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginBottom: 4 },
-  rangeInput: {
-    flex: 1,
-    backgroundColor: colors.tertiarySystemFill,
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    fontSize: 14,
-    color: colors.label,
-  },
-  list: { paddingHorizontal: 16, paddingBottom: 24 },
-  sectionHeader: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: colors.secondaryLabel,
-    marginTop: 16,
-    marginBottom: 4,
-  },
-  empty: { color: colors.secondaryLabel, paddingVertical: 24, textAlign: 'center' },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    paddingVertical: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.separator,
-  },
-  rowIcon: { fontSize: 20 },
-  rowBody: { flex: 1 },
-  rowName: { fontSize: 16, color: colors.label },
-  rowNote: { fontSize: 13, color: colors.secondaryLabel },
-  rowAmount: { fontSize: 16, fontWeight: '600', color: colors.label },
-  trashButton: { paddingLeft: 6 },
-  trashIcon: { fontSize: 16 },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    center: { flex: 1, backgroundColor: colors.background, alignItems: 'center', justifyContent: 'center' },
+    filterRow: { flexGrow: 0, paddingHorizontal: 16, paddingVertical: 8 },
+    chip: {
+      paddingVertical: 8,
+      paddingHorizontal: 14,
+      borderRadius: 16,
+      backgroundColor: colors.fill,
+      marginRight: 8,
+    },
+    chipSelected: { backgroundColor: colors.tint },
+    chipText: { fontSize: 14, fontWeight: '500', color: colors.label },
+    chipTextSelected: { color: colors.onTint },
+    rangeRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginBottom: 4 },
+    rangeInput: {
+      flex: 1,
+      backgroundColor: colors.fill,
+      borderRadius: 10,
+      paddingHorizontal: 10,
+      paddingVertical: 8,
+      fontSize: 14,
+      color: colors.label,
+    },
+    list: { paddingHorizontal: 16, paddingBottom: 24 },
+    sectionHeader: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: colors.secondaryLabel,
+      marginTop: 16,
+      marginBottom: 4,
+    },
+    empty: { color: colors.secondaryLabel, paddingVertical: 24, textAlign: 'center' },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      paddingVertical: 10,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: colors.separator,
+    },
+    rowIcon: { fontSize: 20 },
+    rowBody: { flex: 1 },
+    rowName: { fontSize: 16, color: colors.label },
+    rowNote: { fontSize: 13, color: colors.secondaryLabel },
+    rowAmount: { fontSize: 16, fontWeight: '600', color: colors.label },
+    trashButton: { paddingLeft: 6 },
+    trashIcon: { fontSize: 16 },
+  });
+}

@@ -1,8 +1,11 @@
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 
+import { useTheme } from '@/constants/theme';
+
 export default function TabsLayout() {
+  const { colors } = useTheme();
   return (
-    <NativeTabs>
+    <NativeTabs tintColor={colors.tint}>
       <NativeTabs.Trigger name="(home)">
         <NativeTabs.Trigger.Icon sf={{ default: 'house', selected: 'house.fill' }} md="home" />
         <NativeTabs.Trigger.Label>Inicio</NativeTabs.Trigger.Label>

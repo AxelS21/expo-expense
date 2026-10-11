@@ -1,25 +1,42 @@
-import { Platform, PlatformColor, type ColorValue } from 'react-native';
+import { useColorScheme } from 'react-native';
 
-// Semantic iOS system colors adapt to light/dark mode automatically.
-// Non-iOS platforms get static light-mode fallbacks.
-function semantic(iosName: string, fallback: string): ColorValue {
-  return Platform.OS === 'ios' ? PlatformColor(iosName) : fallback;
-}
-
-export const colors = {
-  label: semantic('label', '#000000'),
-  secondaryLabel: semantic('secondaryLabel', '#8E8E93'),
-  tertiaryLabel: semantic('tertiaryLabel', '#C7C7CC'),
-  systemBackground: semantic('systemBackground', '#FFFFFF'),
-  systemGroupedBackground: semantic('systemGroupedBackground', '#F2F2F7'),
-  secondarySystemGroupedBackground: semantic('secondarySystemGroupedBackground', '#FFFFFF'),
-  tertiarySystemFill: semantic('tertiarySystemFill', '#E5E5EA'),
-  separator: semantic('separator', '#C6C6C8'),
-  tint: semantic('systemBlue', '#0A84FF'),
-  destructive: semantic('systemRed', '#FF3B30'),
+// Explicit palettes selected from the JS color scheme. PlatformColor was dropped because its
+// native resolution did not match the container appearance on iOS 26 (dark background, dark text).
+export const lightColors = {
+  background: '#F3F4F8',
+  surface: '#FFFFFF',
+  label: '#0B1220',
+  secondaryLabel: '#5B6475',
+  tertiaryLabel: '#8A93A3',
+  separator: 'rgba(15,23,42,0.08)',
+  fill: '#E8EBF2',
+  tint: '#2F6BFF',
+  destructive: '#E5484D',
   // Text/icons drawn on top of `tint` fills.
   onTint: '#FFFFFF',
 } as const;
+
+export type ThemeColors = { readonly [K in keyof typeof lightColors]: string };
+
+export const darkColors: ThemeColors = {
+  background: '#0B0F17',
+  surface: '#161B26',
+  label: '#F4F6FA',
+  secondaryLabel: '#A3ACBC',
+  tertiaryLabel: '#7C8597',
+  separator: 'rgba(255,255,255,0.08)',
+  fill: '#222938',
+  tint: '#5B8CFF',
+  destructive: '#FF6369',
+  onTint: '#FFFFFF',
+};
+
+export type ThemeScheme = 'light' | 'dark';
+
+export function useTheme(): { colors: ThemeColors; scheme: ThemeScheme } {
+  const scheme: ThemeScheme = useColorScheme() === 'dark' ? 'dark' : 'light';
+  return { colors: scheme === 'dark' ? darkColors : lightColors, scheme };
+}
 
 export const spacing = {
   xs: 4,

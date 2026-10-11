@@ -2,6 +2,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
+import { useTheme } from '@/constants/theme';
 import { registerWidgets } from '@/widgets/register';
 
 export const unstable_settings = {
@@ -9,14 +10,22 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
+  const { colors, scheme } = useTheme();
   useEffect(() => {
     registerWidgets();
   }, []);
 
   return (
     <>
-      <StatusBar style="auto" />
-      <Stack>
+      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+      <Stack
+        screenOptions={{
+          contentStyle: { backgroundColor: colors.background },
+          headerTitleStyle: { color: colors.label },
+          headerLargeTitleStyle: { color: colors.label },
+          headerTintColor: colors.tint,
+        }}
+      >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="expense/new"

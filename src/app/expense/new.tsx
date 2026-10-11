@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -14,10 +14,12 @@ import { router } from 'expo-router';
 import { listActiveCategories } from '@/db/categories.repository';
 import { createExpense } from '@/db/expenses.repository';
 import { formatAmount, parseAmount } from '@/utils/money';
-import { colors } from '@/constants/theme';
+import { type ThemeColors, useTheme  } from '@/constants/theme';
 import type { Category } from '@/types/models';
 
 export default function NewExpenseScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [categories, setCategories] = useState<Category[] | null>(null);
   const [rawAmount, setRawAmount] = useState('');
   const [categoryId, setCategoryId] = useState<string | null>(null);
@@ -67,6 +69,7 @@ export default function NewExpenseScreen() {
         style={styles.amountInput}
         keyboardType="number-pad"
         autoFocus
+        placeholderTextColor={colors.tertiaryLabel}
         placeholder="$ 0"
         value={rawAmount}
         onChangeText={setRawAmount}
@@ -97,6 +100,7 @@ export default function NewExpenseScreen() {
       <Text style={styles.label}>Nota opcional</Text>
       <TextInput
         style={styles.noteInput}
+        placeholderTextColor={colors.tertiaryLabel}
         placeholder="Nota"
         value={note}
         onChangeText={setNote}
@@ -121,44 +125,46 @@ export default function NewExpenseScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.systemBackground },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  content: { padding: 20, gap: 8 },
-  label: { fontSize: 13, fontWeight: '600', color: colors.secondaryLabel, marginTop: 16 },
-  amountInput: { fontSize: 44, fontWeight: '700', paddingVertical: 8, color: colors.label },
-  amountPreview: { fontSize: 15, color: colors.secondaryLabel },
-  categoryRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 8 },
-  categoryChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 20,
-    backgroundColor: colors.tertiarySystemFill,
-  },
-  categoryChipSelected: { backgroundColor: colors.tint },
-  categoryIcon: { fontSize: 18 },
-  categoryName: { fontSize: 15, fontWeight: '500', color: colors.label },
-  categoryNameSelected: { color: colors.onTint },
-  noteInput: {
-    minHeight: 44,
-    borderRadius: 12,
-    backgroundColor: colors.tertiarySystemFill,
-    padding: 12,
-    fontSize: 16,
-    color: colors.label,
-  },
-  saveButton: {
-    marginTop: 32,
-    backgroundColor: colors.tint,
-    borderRadius: 14,
-    paddingVertical: 16,
-    alignItems: 'center',
-    minHeight: 52,
-    justifyContent: 'center',
-  },
-  saveButtonDisabled: { opacity: 0.4 },
-  saveButtonText: { color: colors.onTint, fontSize: 17, fontWeight: '600' },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    center: { flex: 1, backgroundColor: colors.background, alignItems: 'center', justifyContent: 'center' },
+    content: { padding: 20, gap: 8 },
+    label: { fontSize: 13, fontWeight: '600', color: colors.secondaryLabel, marginTop: 16 },
+    amountInput: { fontSize: 44, fontWeight: '700', paddingVertical: 8, color: colors.label },
+    amountPreview: { fontSize: 15, color: colors.secondaryLabel },
+    categoryRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 8 },
+    categoryChip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      paddingVertical: 10,
+      paddingHorizontal: 14,
+      borderRadius: 20,
+      backgroundColor: colors.fill,
+    },
+    categoryChipSelected: { backgroundColor: colors.tint },
+    categoryIcon: { fontSize: 18 },
+    categoryName: { fontSize: 15, fontWeight: '500', color: colors.label },
+    categoryNameSelected: { color: colors.onTint },
+    noteInput: {
+      minHeight: 44,
+      borderRadius: 12,
+      backgroundColor: colors.fill,
+      padding: 12,
+      fontSize: 16,
+      color: colors.label,
+    },
+    saveButton: {
+      marginTop: 32,
+      backgroundColor: colors.tint,
+      borderRadius: 14,
+      paddingVertical: 16,
+      alignItems: 'center',
+      minHeight: 52,
+      justifyContent: 'center',
+    },
+    saveButtonDisabled: { opacity: 0.4 },
+    saveButtonText: { color: colors.onTint, fontSize: 17, fontWeight: '600' },
+  });
+}

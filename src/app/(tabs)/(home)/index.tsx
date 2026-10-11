@@ -1,9 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Link, Stack, router, useFocusEffect } from 'expo-router';
-import * as Updates from 'expo-updates';
-import { RELEASE_LABEL } from '@/constants/release';
-import { colors, spacing } from '@/constants/theme';
+import { type ThemeColors, useTheme, spacing } from '@/constants/theme';
 import { listActiveCategories } from '@/db/categories.repository';
 import { getMonthlyTotal, listExpenses } from '@/db/expenses.repository';
 import { formatAmount } from '@/utils/money';
@@ -14,6 +12,8 @@ function currentYearMonth(): string {
 }
 
 export default function HomeScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [loading, setLoading] = useState(true);
   const [monthTotal, setMonthTotal] = useState(0);
   const [recent, setRecent] = useState<Expense[]>([]);
@@ -85,44 +85,37 @@ export default function HomeScreen() {
           );
         })}
       </View>
-      <Text style={styles.release}>
-        v{RELEASE_LABEL} · {Updates.isEmbeddedLaunch ? 'build' : 'OTA'}
-      </Text>
     </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.systemBackground },
-  content: { paddingHorizontal: spacing.xl, paddingBottom: spacing.xxl },
-  monthLabel: { fontSize: 13, fontWeight: '600', color: colors.secondaryLabel, marginTop: spacing.md },
-  monthLoading: { alignSelf: 'flex-start', marginTop: spacing.sm },
-  monthTotal: { fontSize: 36, fontWeight: '700', marginTop: spacing.xs, color: colors.label },
-  recentHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: spacing.xxl,
-  },
-  recentTitle: { fontSize: 17, fontWeight: '600', color: colors.label },
-  link: { color: colors.tint, fontSize: 14 },
-  list: { paddingTop: spacing.sm, gap: spacing.xs },
-  release: {
-    marginTop: spacing.xxl,
-    textAlign: 'center',
-    fontSize: 12,
-    color: colors.tertiaryLabel,
-  },
-  empty: { color: colors.secondaryLabel, paddingVertical: spacing.lg },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    paddingVertical: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.separator,
-  },
-  rowIcon: { fontSize: 20 },
-  rowName: { flex: 1, fontSize: 16, color: colors.label },
-  rowAmount: { fontSize: 16, fontWeight: '600', color: colors.label },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.background },
+    content: { paddingHorizontal: spacing.xl, paddingBottom: spacing.xxl },
+    monthLabel: { fontSize: 13, fontWeight: '600', color: colors.secondaryLabel, marginTop: spacing.md },
+    monthLoading: { alignSelf: 'flex-start', marginTop: spacing.sm },
+    monthTotal: { fontSize: 36, fontWeight: '700', marginTop: spacing.xs, color: colors.label },
+    recentHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginTop: spacing.xxl,
+    },
+    recentTitle: { fontSize: 17, fontWeight: '600', color: colors.label },
+    link: { color: colors.tint, fontSize: 14 },
+    list: { paddingTop: spacing.sm, gap: spacing.xs },
+    empty: { color: colors.secondaryLabel, paddingVertical: spacing.lg },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      paddingVertical: 10,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: colors.separator,
+    },
+    rowIcon: { fontSize: 20 },
+    rowName: { flex: 1, fontSize: 16, color: colors.label },
+    rowAmount: { fontSize: 16, fontWeight: '600', color: colors.label },
+  });
+}
