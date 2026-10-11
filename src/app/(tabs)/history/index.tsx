@@ -39,6 +39,10 @@ const QUICK_PERIODS: { key: QuickPeriod; label: string }[] = [
 
 type RangeEnd = 'from' | 'to';
 
+// Filter chips draw at 36pt to keep the rows compact; 4pt of vertical slop on each side
+// brings the touch target to the 44pt HIG minimum (the 4pt row padding leaves room for it).
+const CHIP_HIT_SLOP = { top: 4, bottom: 4 } as const;
+
 const RANGE_ENDS: { end: RangeEnd; label: string }[] = [
   { end: 'from', label: 'Desde' },
   { end: 'to', label: 'Hasta' },
@@ -151,6 +155,7 @@ export default function HistoryScreen() {
       >
         {QUICK_PERIODS.map((option) => (
           <Pressable
+            hitSlop={CHIP_HIT_SLOP}
             key={option.key}
             onPress={() => {
               setShowCustomRange(false);
@@ -167,6 +172,7 @@ export default function HistoryScreen() {
           </Pressable>
         ))}
         <Pressable
+          hitSlop={CHIP_HIT_SLOP}
           onPress={() => setShowCustomRange((v) => !v)}
           style={[styles.chip, showCustomRange && styles.chipSelected]}
         >
@@ -189,8 +195,8 @@ export default function HistoryScreen() {
                   accessibilityLabel={`${label}: ${dayText}`}
                   accessibilityState={{ expanded: active }}
                 >
-                  <Text style={styles.rangePillLabel}>{label}</Text>
-                  <Text style={styles.rangePillValue}>{dayText}</Text>
+                  <Text style={[styles.rangePillLabel, active && styles.rangePillTextActive]}>{label}</Text>
+                  <Text style={[styles.rangePillValue, active && styles.rangePillTextActive]}>{dayText}</Text>
                 </Pressable>
               );
             })}
@@ -208,6 +214,7 @@ export default function HistoryScreen() {
         contentContainerStyle={styles.filterContent}
       >
         <Pressable
+          hitSlop={CHIP_HIT_SLOP}
           onPress={() => setCategoryId(null)}
           style={[styles.chip, categoryId === null && styles.chipSelected]}
         >
@@ -215,6 +222,7 @@ export default function HistoryScreen() {
         </Pressable>
         {categories.map((category) => (
           <Pressable
+            hitSlop={CHIP_HIT_SLOP}
             key={category.id}
             onPress={() => setCategoryId(category.id)}
             style={[styles.chip, categoryId === category.id && styles.chipSelected]}
@@ -298,7 +306,7 @@ function createStyles(colors: ThemeColors) {
     chip: {
       height: 36,
       justifyContent: 'center',
-      paddingHorizontal: 14,
+      paddingHorizontal: spacing.lg,
       borderRadius: radius.pill,
       backgroundColor: colors.fill,
     },
@@ -318,7 +326,8 @@ function createStyles(colors: ThemeColors) {
       borderRadius: radius.pill,
       backgroundColor: colors.fill,
     },
-    rangePillActive: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.tint },
+    rangePillActive: { backgroundColor: colors.tint },
+    rangePillTextActive: { color: colors.onTint },
     rangePillLabel: { fontSize: 14, color: colors.secondaryLabel },
     rangePillValue: { fontSize: 14, fontWeight: '600', color: colors.label },
     list: { paddingBottom: spacing.xxl },

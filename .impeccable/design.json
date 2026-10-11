@@ -71,7 +71,7 @@
       "refersTo": "chip-category",
       "description": "Horizontal category selector on the expense form; selected turns Signal Blue.",
       "html": "<div class=\"ds-chips\"><button class=\"ds-chip ds-chip-on\"><span>🍔</span>Comida</button><button class=\"ds-chip\"><span>🛒</span>Supermercado</button></div>",
-      "css": ".ds-chips { display: flex; gap: 8px; padding: 16px; background: #F3F4F8; } .ds-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border: none; border-radius: 999px; background: #FFFFFF; color: #0B1220; font: 500 15px -apple-system, system-ui, sans-serif; } .ds-chip span { font-size: 18px; } .ds-chip-on { background: #2F6BFF; color: #FFFFFF; } .ds-chip:focus-visible { outline: 2px solid #2F6BFF; outline-offset: 2px; }"
+      "css": ".ds-chips { display: flex; gap: 8px; padding: 16px; background: #F3F4F8; } .ds-chip { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: none; border-radius: 999px; background: #FFFFFF; color: #0B1220; font: 500 15px -apple-system, system-ui, sans-serif; } .ds-chip span { font-size: 18px; } .ds-chip-on { background: #2F6BFF; color: #FFFFFF; } .ds-chip:focus-visible { outline: 2px solid #2F6BFF; outline-offset: 2px; }"
     },
     {
       "name": "Hero Card",

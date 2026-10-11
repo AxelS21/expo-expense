@@ -14,6 +14,7 @@ import {
 
 import { RELEASE_LABEL } from '@/constants/release';
 import { type ThemeColors, radius, spacing, useTheme } from '@/constants/theme';
+import { Symbol } from '@/components/ui/Symbol';
 import type { Backup } from '@/services/backup.format';
 import { exportBackup, pickBackup, restoreBackup } from '@/services/backup.service';
 
@@ -122,7 +123,7 @@ export default function SettingsScreen() {
           style={({ pressed }) => [styles.valueRow, pressed && styles.pressed]}
         >
           <Text style={styles.rowText}>Categorías</Text>
-          <Text style={styles.rowValue}>›</Text>
+          <Symbol name="chevron.right" size={14} weight="semibold" color={colors.tertiaryLabel} fallback="›" />
         </Pressable>
       </View>
 

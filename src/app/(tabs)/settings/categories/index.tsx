@@ -3,6 +3,7 @@ import { Fragment, useCallback, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { type ThemeColors, radius, spacing, useTheme } from '@/constants/theme';
+import { Symbol } from '@/components/ui/Symbol';
 import { listAllCategories } from '@/db/categories.repository';
 import type { Category } from '@/types/models';
 
@@ -36,7 +37,7 @@ export default function CategoriesScreen() {
               <Text style={[styles.name, category.isArchived && styles.archivedName]} numberOfLines={1}>
                 {category.name}
               </Text>
-              <Text style={styles.chevron}>›</Text>
+              <Symbol name="chevron.right" size={14} weight="semibold" color={colors.tertiaryLabel} fallback="›" />
             </Pressable>
           </Fragment>
         ))}
@@ -95,7 +96,6 @@ function createStyles(colors: ThemeColors) {
     icon: { fontSize: 20 },
     name: { flex: 1, fontSize: 17, color: colors.label },
     archivedName: { color: colors.secondaryLabel },
-    chevron: { fontSize: 17, color: colors.tertiaryLabel },
     pressed: { opacity: 0.6 },
     separator: {
       height: StyleSheet.hairlineWidth,

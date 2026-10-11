@@ -3,6 +3,7 @@ import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { DatePicker, Host } from '@expo/ui/swift-ui';
 import { datePickerStyle } from '@expo/ui/swift-ui/modifiers';
 import { type ThemeColors, radius, spacing, useTheme } from '@/constants/theme';
+import { Symbol } from '@/components/ui/Symbol';
 import {
   dateFromDayKey,
   dayKeyFromDate,
@@ -41,7 +42,7 @@ export function DatePickerPanel({ dayKey, onChange, maxDayKey }: DatePickerPanel
           accessibilityRole="button"
           accessibilityLabel="Día anterior"
         >
-          <Text style={styles.stepperGlyph}>‹</Text>
+          <Symbol name="chevron.left" size={20} weight="semibold" color={colors.tint} fallback="‹" />
         </Pressable>
         <Text style={styles.stepperLabel}>{formatDayLabel(dayKey)}</Text>
         <Pressable
@@ -52,7 +53,7 @@ export function DatePickerPanel({ dayKey, onChange, maxDayKey }: DatePickerPanel
           accessibilityLabel="Día siguiente"
           accessibilityState={{ disabled: atMax }}
         >
-          <Text style={styles.stepperGlyph}>›</Text>
+          <Symbol name="chevron.right" size={20} weight="semibold" color={colors.tint} fallback="›" />
         </Pressable>
       </View>
       {Platform.OS === 'ios' && (
@@ -82,7 +83,6 @@ function createStyles(colors: ThemeColors) {
       alignItems: 'center',
       justifyContent: 'center',
     },
-    stepperGlyph: { fontSize: 24, color: colors.tint, fontWeight: '600' },
     stepperLabel: { fontSize: 17, fontWeight: '600', color: colors.label },
     disabled: { opacity: 0.4 },
   });

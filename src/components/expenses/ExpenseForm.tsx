@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { DatePickerPanel } from '@/components/DatePickerPanel';
 import { type ThemeColors, radius, spacing, useTheme } from '@/constants/theme';
+import { Symbol } from '@/components/ui/Symbol';
 import { amountFromKeypad, formatAmount, type Amount } from '@/utils/money';
 import type { Category } from '@/types/models';
 import { AmountKeypad } from './AmountKeypad';
@@ -94,7 +95,7 @@ export function ExpenseForm({
           accessibilityLabel={`Fecha: ${formatDayLabel(dayKey)}`}
           accessibilityState={{ expanded: datePanelOpen }}
         >
-          <Text style={styles.pillIcon}>📅</Text>
+          <Symbol name="calendar" size={15} color={colors.secondaryLabel} />
           <Text style={styles.pillText}>{formatDayLabel(dayKey)}</Text>
         </Pressable>
 
@@ -119,7 +120,7 @@ export function ExpenseForm({
             accessibilityRole="button"
             accessibilityLabel={trimmedNote ? `Nota: ${trimmedNote}` : 'Agregar nota'}
           >
-            <Text style={styles.pillIcon}>✎</Text>
+            <Symbol name="pencil" size={15} color={colors.secondaryLabel} />
             <Text style={[styles.pillText, !trimmedNote && styles.pillTextMuted]} numberOfLines={1}>
               {trimmedNote || 'Agregar nota'}
             </Text>
@@ -199,16 +200,15 @@ function createStyles(colors: ThemeColors) {
     pillActive: { backgroundColor: colors.fill },
     notePill: { flexShrink: 1 },
     noteInput: { flex: 1, fontSize: 15, color: colors.label },
-    pillIcon: { fontSize: 15, color: colors.secondaryLabel },
     pillText: { fontSize: 15, fontWeight: '500', color: colors.label, flexShrink: 1 },
     pillTextMuted: { color: colors.secondaryLabel },
     categoryRow: { gap: spacing.sm },
     categoryChip: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: spacing.xs + 2,
+      gap: spacing.sm,
       minHeight: 44,
-      paddingHorizontal: spacing.md + 2,
+      paddingHorizontal: spacing.lg,
       borderRadius: radius.pill,
       backgroundColor: colors.surface,
     },

@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { type ThemeColors, radius, spacing, useTheme } from '@/constants/theme';
+import { Symbol } from '@/components/ui/Symbol';
 import { CURRENCY_FRACTION_DIGITS, DEFAULT_CURRENCY } from '@/constants/currency';
 import { KEYPAD_DECIMAL_SEPARATOR } from '@/utils/money';
 
@@ -69,7 +70,11 @@ export function AmountKeypad({ value, onChange }: AmountKeypadProps) {
                 accessibilityLabel={isBackspace ? 'Borrar' : key === KEYPAD_DECIMAL_SEPARATOR ? 'Coma decimal' : key}
                 accessibilityHint={isBackspace ? 'Mantén presionado para borrar todo' : undefined}
               >
-                <Text style={styles.keyText}>{isBackspace ? '⌫' : key}</Text>
+                {isBackspace ? (
+                  <Symbol name="delete.left" size={24} color={colors.label} fallback="⌫" />
+                ) : (
+                  <Text style={styles.keyText}>{key}</Text>
+                )}
               </Pressable>
             );
           })}

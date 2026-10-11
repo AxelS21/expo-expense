@@ -94,7 +94,7 @@ components:
     typography: "{typography.callout}"
     rounded: "{rounded.pill}"
     height: "44px"
-    padding: "0 14px"
+    padding: "0 16px"
   chip-category-selected:
     backgroundColor: "{colors.tint}"
     textColor: "{colors.on-tint}"
@@ -208,7 +208,7 @@ Grouped lists are built from their rows: the first row rounds its top corners, t
 
 ### Chips
 - **Category chip:** 44px pill, Card White fill, emoji plus Callout label. Selected turns Signal Blue with On Tint text. Scrolls horizontally.
-- **Filter chip (Historial):** pill with 14px horizontal padding, same selected treatment.
+- **Filter chip (Historial):** 36px pill with 16px horizontal padding and 4px vertical hit slop for a 44px touch target, same selected treatment. The Desde/Hasta range pills use the same selected treatment.
 
 ### Cards / Containers
 - **Corner Style:** 16px.
@@ -220,6 +220,9 @@ Grouped lists are built from their rows: the first row rounds its top corners, t
 ### Inputs / Fields
 - **Pill field:** 44px pill in Card White holding an icon and a 15px value (date, note). Active state switches to Quiet Fill. The note pill swaps in place for a `TextInput` with Haze placeholder.
 - **Date picker:** native SwiftUI graphical `DatePicker` (via `@expo/ui`) inside a 16px-radius surface panel.
+
+### Icons
+In-content icons are SF Symbols drawn by `src/components/ui/Symbol.tsx` (the SwiftUI `Image` from `@expo/ui` in a fixed-size `Host`, decorative by default, text fallback off iOS). Used for list chevrons (`chevron.right`, 14pt semibold, Haze), the day stepper (`chevron.left`/`chevron.right`), keypad backspace (`delete.left`) and the date and note pills (`calendar`, `pencil`). No text glyphs as icons.
 
 ### Navigation
 - Native floating glass tab bar with SF Symbol icons (filled variant when selected) and Signal Blue tint.
