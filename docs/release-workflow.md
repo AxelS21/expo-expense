@@ -32,7 +32,7 @@ Para volver atrás, publicar otra actualización encima o usar `eas update:repub
 
 ## 3. Cambios nativos (build nueva)
 
-1. Subir `version` en `app.config.ts`. `runtimeVersion` usa la política `appVersion`, así que las OTA viejas no se aplican a la build nueva y viceversa. **Si se omite este paso, una OTA puede pedir código nativo inexistente y romper la app al abrirla.**
+1. Subir `version` en `app.config.ts`. `runtimeVersion` usa la política `appVersion`, así que las OTA viejas no se aplican a la build nueva y viceversa. **Si se omite este paso, una OTA puede pedir código nativo inexistente y romper la app al abrirla.** Subir también `ios.buildNumber` en cada build nativa: iOS cachea la lista de widgets según ese número, y si no cambia, los widgets nuevos no aparecen en la galería.
 2. Ejecutar el workflow **iOS unsigned build** en GitHub Actions (`gh workflow run ios-unsigned.yml --ref main`).
 3. Descargar el artifact `Expense-unsigned-ipa` y copiarlo al iPhone (por ejemplo, vía iCloud Drive).
 4. En AltStore: **My Apps → "+"**, elegir el `.ipa` y responder **Keep App Extensions** (sin la extensión no hay widget).

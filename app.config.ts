@@ -11,6 +11,8 @@ const config: ExpoConfig = {
   platforms: ['ios'],
   ios: {
     bundleIdentifier: 'com.axelgere.expense',
+    // Bump on every native build: iOS caches widget descriptors per build number.
+    buildNumber: '2',
     supportsTablet: false,
     // La app no envia datos a terceros y no requiere permisos especiales.
     infoPlist: {
