@@ -48,7 +48,7 @@ export interface DayGroup<T> {
 export function groupByDay<T>(items: T[], getDate: (item: T) => string): DayGroup<T>[] {
   const groups: DayGroup<T>[] = [];
   for (const item of items) {
-    const key = toDayKey(new Date(getDate(item)));
+    const key = localDayKey(getDate(item));
     const last = groups[groups.length - 1];
     if (last && last.key === key) {
       last.items.push(item);
@@ -94,4 +94,30 @@ export function isWithinRange(isoDate: string, fromDate: string | null, toDate: 
   if (fromDate && time < parseLocalDate(fromDate).setHours(0, 0, 0, 0)) return false;
   if (toDate && time > parseLocalDate(toDate).setHours(23, 59, 59, 999)) return false;
   return true;
+}
+
+/**
+ * Half-open UTC ISO bounds [startIso, endIso) for a local calendar month "YYYY-MM".
+ * Stored expense dates are UTC ISO strings, so month filters must compare against
+ * local midnights instead of matching the UTC "YYYY-MM" prefix.
+ */
+export function localMonthRange(yearMonth: string): { startIso: string; endIso: string } {
+  const [year = 1970, month = 1] = yearMonth.split('-').map(Number);
+  return {
+    startIso: new Date(year, month - 1, 1).toISOString(),
+    endIso: new Date(year, month, 1).toISOString(),
+  };
+}
+
+/** "YYYY-MM-DD" of a stored ISO timestamp in local time. Never slice the UTC string. */
+export function localDayKey(iso: string): string {
+  return toDayKey(new Date(iso));
+}
+
+/** Moves a stored ISO timestamp to another local day ("YYYY-MM-DD"), keeping its local time of day. */
+export function withLocalDay(iso: string, dayKey: string): string {
+  const source = new Date(iso);
+  const target = parseLocalDate(dayKey);
+  target.setHours(source.getHours(), source.getMinutes(), source.getSeconds(), source.getMilliseconds());
+  return target.toISOString();
 }

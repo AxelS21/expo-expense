@@ -6,6 +6,7 @@ import { listActiveCategories } from '@/db/categories.repository';
 import { getExpenseById, trashExpense, updateExpense } from '@/db/expenses.repository';
 import { ExpenseForm, type ExpenseFormValues } from '@/components/expenses/ExpenseForm';
 import { keypadFromAmount } from '@/utils/money';
+import { localDayKey, withLocalDay } from '@/utils/date';
 import { type ThemeColors, useTheme } from '@/constants/theme';
 import type { Category, Expense } from '@/types/models';
 
@@ -32,9 +33,9 @@ export default function EditExpenseScreen() {
   async function handleSubmit({ amount, categoryId, note, dayKey }: ExpenseFormValues) {
     if (!expense) return;
     try {
-      // Keep the stored time-of-day suffix and replace only the calendar day, as before.
-      const time = expense.expenseDate.slice(10);
-      await updateExpense(expense.id, { amount, categoryId, note, expenseDate: `${dayKey}${time}` });
+      // Move to the chosen local day, keeping the local time of day.
+      const expenseDate = withLocalDay(expense.expenseDate, dayKey);
+      await updateExpense(expense.id, { amount, categoryId, note, expenseDate });
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.back();
     } catch (error) {
@@ -82,7 +83,7 @@ export default function EditExpenseScreen() {
         initialKeypad={keypadFromAmount(expense.amount)}
         initialCategoryId={expense.categoryId}
         initialNote={expense.note ?? ''}
-        initialDayKey={expense.expenseDate.slice(0, 10)}
+        initialDayKey={localDayKey(expense.expenseDate)}
         submitLabel="Guardar cambios"
         onSubmit={handleSubmit}
       />

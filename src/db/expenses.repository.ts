@@ -2,6 +2,7 @@ import { randomUUID } from 'expo-crypto';
 import { getDatabase } from './index';
 import { isValidAmount, type Amount } from '@/utils/money';
 import type { Expense } from '@/types/models';
+import { localMonthRange } from '@/utils/date';
 
 interface ExpenseRow {
   id: string;
@@ -154,10 +155,11 @@ export async function listTrashedExpenses(): Promise<Expense[]> {
 
 export async function getMonthlyTotal(yearMonth: string): Promise<{ total: number; count: number }> {
   const db = await getDatabase();
+  const { startIso, endIso } = localMonthRange(yearMonth);
   const row = await db.getFirstAsync<{ total: number | null; count: number }>(
     `SELECT SUM(amount) as total, COUNT(*) as count FROM expenses
-     WHERE deleted_at IS NULL AND expense_date LIKE ?`,
-    [`${yearMonth}%`]
+     WHERE deleted_at IS NULL AND expense_date >= ? AND expense_date < ?`,
+    [startIso, endIso]
   );
   return { total: row?.total ?? 0, count: row?.count ?? 0 };
 }
@@ -166,11 +168,12 @@ export async function getTotalsByCategory(
   yearMonth: string
 ): Promise<{ categoryId: string; total: number }[]> {
   const db = await getDatabase();
+  const { startIso, endIso } = localMonthRange(yearMonth);
   const rows = await db.getAllAsync<{ category_id: string; total: number }>(
     `SELECT category_id, SUM(amount) as total FROM expenses
-     WHERE deleted_at IS NULL AND expense_date LIKE ?
+     WHERE deleted_at IS NULL AND expense_date >= ? AND expense_date < ?
      GROUP BY category_id`,
-    [`${yearMonth}%`]
+    [startIso, endIso]
   );
   return rows.map((row) => ({ categoryId: row.category_id, total: row.total }));
 }
