@@ -193,6 +193,8 @@ Screen layout under native headers:
 - Never use a plain `View` as the screen root, and never put fixed content (filters, totals) above the list. Put that content inside the scroll view or in `ListHeaderComponent`.
 - If you skip this, the content renders under the status bar and the header. Neither web nor Android reproduces the bug, so it only shows up on iOS.
 
+Pushed detail screens (edit expense, diagnostics) belong in their tab's own Stack, under `src/app/(tabs)/<tab>/`. They do not belong in the root Stack. When pushed on the root Stack, the back button reads "(tabs)" and the header ignores the app's theme. Only modal sheets such as `expense/new` belong in the root Stack.
+
 Do not add an in-app biometric lock in the MVP. The system's normal Face ID/PIN unlock is sufficient when entering through the Lock Screen widget.
 
 ---

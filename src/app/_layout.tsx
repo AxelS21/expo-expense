@@ -31,8 +31,6 @@ export default function RootLayout() {
           name="expense/new"
           options={{ title: 'Nuevo gasto', presentation: 'formSheet', sheetGrabberVisible: true, sheetAllowedDetents: [1.0] }}
         />
-        <Stack.Screen name="expense/[id]" options={{ title: 'Editar gasto' }} />
-        <Stack.Screen name="diagnostics" options={{ title: 'Diagnóstico' }} />
       </Stack>
     </>
   );

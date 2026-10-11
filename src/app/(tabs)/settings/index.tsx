@@ -23,7 +23,7 @@ export default function SettingsScreen() {
       contentContainerStyle={styles.content}
       contentInsetAdjustmentBehavior="automatic"
     >
-      <Link href="/diagnostics" style={styles.row}>
+      <Link href="/settings/diagnostics" style={styles.row}>
         <Text style={styles.rowText}>Diagnóstico del widget</Text>
       </Link>
 

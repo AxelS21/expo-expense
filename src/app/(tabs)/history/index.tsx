@@ -186,7 +186,7 @@ export default function HistoryScreen() {
         return (
           <Pressable
             style={styles.row}
-            onPress={() => router.push(`/expense/${item.id}`)}
+            onPress={() => router.push(`/history/${item.id}`)}
             accessibilityRole="button"
             accessibilityLabel={`Editar gasto ${category?.name ?? ''} ${formatAmount(item.amount)}`}
           >

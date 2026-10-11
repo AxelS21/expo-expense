@@ -15,6 +15,7 @@ export default function Layout() {
       }}
     >
       <Stack.Screen name="index" options={{ title: 'Historial' }} />
+      <Stack.Screen name="[id]" options={{ title: 'Editar gasto', headerLargeTitle: false }} />
     </Stack>
   );
 }
