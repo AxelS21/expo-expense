@@ -49,3 +49,4 @@ Redesign the app UI around iOS 26 liquid glass, using Monzo as the visual refere
   - `theme.ts` uses PlatformColor.
   - Removed expo-symbols: it was unused, because SF Symbol names are passed directly. T1 adds no native modules, so it can ship by OTA.
   - Checks: tsc and expo export ios passed (writer run), and the parent re-ran tsc and it passed. `expo install --check` fails on 12 pre-existing outdated packages, which are out of scope. Device check is pending.
+- Palette fix + version in Ajustes: OTA 1.0.003 (12ce9e2f). Review: high (workflow shell), declined by user for this candidate.
