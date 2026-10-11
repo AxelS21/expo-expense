@@ -17,7 +17,25 @@ export function dayLabel(isoDate: string): string {
   if (key === toDayKey(today)) return 'Hoy';
   if (key === toDayKey(yesterday)) return 'Ayer';
 
-  return date.toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' });
+  const base = `${WEEKDAYS[date.getDay()]} ${date.getDate()} de ${MONTHS[date.getMonth()]}`;
+  return date.getFullYear() === today.getFullYear() ? base : `${base} de ${date.getFullYear()}`;
+}
+
+const WEEKDAYS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+const MONTHS = [
+  'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+  'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
+];
+
+/** Lowercase Spanish month name for a 0-based month index. */
+export function monthName(monthIndex: number): string {
+  return MONTHS[((monthIndex % 12) + 12) % 12] ?? '';
+}
+
+/** "YYYY-MM" in local time, shifted by `offset` months from `date`. */
+export function yearMonthKey(date: Date, offset = 0): string {
+  const shifted = new Date(date.getFullYear(), date.getMonth() + offset, 1);
+  return `${shifted.getFullYear()}-${String(shifted.getMonth() + 1).padStart(2, '0')}`;
 }
 
 export interface DayGroup<T> {

@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Platform,
   Pressable,
   ScrollView,
   SectionList,
@@ -11,12 +12,14 @@ import {
   View,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { router, useFocusEffect } from 'expo-router';
+import { Link, router, useFocusEffect } from 'expo-router';
+import { ExpenseRow } from '@/components/expenses/ExpenseRow';
 import { listActiveCategories } from '@/db/categories.repository';
 import { listExpenses, trashExpense } from '@/db/expenses.repository';
 import { formatAmount } from '@/utils/money';
+import { sumAmounts } from '@/utils/aggregate';
 import { groupByDay, isWithinRange, periodStart, type QuickPeriod } from '@/utils/date';
-import { type ThemeColors, useTheme  } from '@/constants/theme';
+import { type ThemeColors, radius, spacing, useTheme } from '@/constants/theme';
 import type { Category, Expense } from '@/types/models';
 
 const QUICK_PERIODS: { key: QuickPeriod; label: string }[] = [
@@ -72,13 +75,14 @@ export default function HistoryScreen() {
     () =>
       groupByDay(filtered, (e) => e.expenseDate).map((group) => ({
         title: group.label,
+        total: sumAmounts(group.items),
         data: group.items,
       })),
     [filtered]
   );
 
   function handleTrash(expense: Expense) {
-    Alert.alert('Enviar a la papelera', 'El gasto quedara recuperable durante 2 dias.', [
+    Alert.alert('Enviar a la papelera', 'El gasto quedará recuperable durante 2 días.', [
       { text: 'Cancelar', style: 'cancel' },
       {
         text: 'Eliminar',
@@ -92,6 +96,15 @@ export default function HistoryScreen() {
     ]);
   }
 
+  // Android has no Link context menu; long press opens the same two actions in a dialog.
+  function showAndroidActions(expense: Expense) {
+    Alert.alert('Gasto', undefined, [
+      { text: 'Editar', onPress: () => router.push(`/history/${expense.id}`) },
+      { text: 'Eliminar', style: 'destructive', onPress: () => handleTrash(expense) },
+      { text: 'Cancelar', style: 'cancel' },
+    ]);
+  }
+
   if (loading && expenses.length === 0) {
     return (
       <View style={styles.center}>
@@ -102,7 +115,9 @@ export default function HistoryScreen() {
 
   const filters = (
     <>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow}
+        contentContainerStyle={styles.filterContent}
+      >
         {QUICK_PERIODS.map((option) => (
           <Pressable
             key={option.key}
@@ -147,7 +162,9 @@ export default function HistoryScreen() {
         </View>
       )}
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow}
+        contentContainerStyle={styles.filterContent}
+      >
         <Pressable
           onPress={() => setCategoryId(null)}
           style={[styles.chip, categoryId === null && styles.chipSelected]}
@@ -179,39 +196,51 @@ export default function HistoryScreen() {
       sections={sections}
       keyExtractor={(item) => item.id}
       contentContainerStyle={styles.list}
-      renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
-      ListEmptyComponent={<Text style={styles.empty}>Sin gastos en este periodo</Text>}
-      renderItem={({ item }) => {
-        const category = categoriesById[item.categoryId];
+      stickySectionHeadersEnabled={false}
+      renderSectionHeader={({ section }) => (
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>{section.title}</Text>
+          <Text style={styles.sectionTotal}>{formatAmount(section.total)}</Text>
+        </View>
+      )}
+      ListEmptyComponent={<Text style={styles.empty}>Sin gastos en este período</Text>}
+      renderItem={({ item, index, section }) => {
+        const row = (
+          <ExpenseRow
+            expense={item}
+            category={categoriesById[item.categoryId]}
+            subtitle={item.note}
+            isFirst={index === 0}
+            isLast={index === section.data.length - 1}
+            accessibilityHint="Mantené presionado para ver más opciones"
+            onLongPress={Platform.OS === 'ios' ? undefined : () => showAndroidActions(item)}
+          />
+        );
+        if (Platform.OS !== 'ios') {
+          return (
+            <Link href={`/history/${item.id}`} asChild>
+              {row}
+            </Link>
+          );
+        }
+        // iOS: native context menu on long press, plain push on tap.
         return (
-          <Pressable
-            style={styles.row}
-            onPress={() => router.push(`/history/${item.id}`)}
-            accessibilityRole="button"
-            accessibilityLabel={`Editar gasto ${category?.name ?? ''} ${formatAmount(item.amount)}`}
-          >
-            <Text style={styles.rowIcon}>{category?.icon ?? '•'}</Text>
-            <View style={styles.rowBody}>
-              <Text style={styles.rowName} numberOfLines={1}>
-                {category?.name ?? 'Sin categoria'}
-              </Text>
-              {item.note ? (
-                <Text style={styles.rowNote} numberOfLines={1}>
-                  {item.note}
-                </Text>
-              ) : null}
-            </View>
-            <Text style={styles.rowAmount}>{formatAmount(item.amount)}</Text>
-            <Pressable
-              onPress={() => handleTrash(item)}
-              hitSlop={10}
-              accessibilityRole="button"
-              accessibilityLabel="Eliminar gasto"
-              style={styles.trashButton}
-            >
-              <Text style={styles.trashIcon}>🗑</Text>
-            </Pressable>
-          </Pressable>
+          <Link href={`/history/${item.id}`}>
+            <Link.Trigger>{row}</Link.Trigger>
+            <Link.Menu>
+              <Link.MenuAction
+                title="Editar"
+                icon="pencil"
+                onPress={() => router.push(`/history/${item.id}`)}
+              />
+              <Link.MenuAction
+                title="Eliminar"
+                icon="trash"
+                destructive
+                onPress={() => handleTrash(item)}
+              />
+            </Link.Menu>
+          </Link>
         );
       }}
     />
@@ -222,50 +251,49 @@ function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.background },
     center: { flex: 1, backgroundColor: colors.background, alignItems: 'center', justifyContent: 'center' },
-    filterRow: { flexGrow: 0, paddingHorizontal: 16, paddingVertical: 8 },
+    filterRow: { flexGrow: 0, paddingVertical: spacing.xs },
+    filterContent: { paddingHorizontal: spacing.lg, gap: spacing.sm },
     chip: {
-      paddingVertical: 8,
+      height: 36,
+      justifyContent: 'center',
       paddingHorizontal: 14,
-      borderRadius: 16,
+      borderRadius: radius.pill,
       backgroundColor: colors.fill,
-      marginRight: 8,
     },
     chipSelected: { backgroundColor: colors.tint },
     chipText: { fontSize: 14, fontWeight: '500', color: colors.label },
     chipTextSelected: { color: colors.onTint },
-    rangeRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginBottom: 4 },
+    rangeRow: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+      paddingHorizontal: spacing.lg,
+      marginVertical: spacing.xs,
+    },
     rangeInput: {
       flex: 1,
       backgroundColor: colors.fill,
-      borderRadius: 10,
+      borderRadius: radius.md,
       paddingHorizontal: 10,
-      paddingVertical: 8,
+      paddingVertical: spacing.sm,
       fontSize: 14,
       color: colors.label,
     },
-    list: { paddingHorizontal: 16, paddingBottom: 24 },
+    list: { paddingBottom: spacing.xxl },
     sectionHeader: {
-      fontSize: 13,
-      fontWeight: '700',
-      color: colors.secondaryLabel,
-      marginTop: 16,
-      marginBottom: 4,
-    },
-    empty: { color: colors.secondaryLabel, paddingVertical: 24, textAlign: 'center' },
-    row: {
       flexDirection: 'row',
-      alignItems: 'center',
-      gap: 10,
-      paddingVertical: 10,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: colors.separator,
+      justifyContent: 'space-between',
+      alignItems: 'baseline',
+      marginTop: spacing.xl,
+      marginBottom: spacing.sm,
+      marginHorizontal: spacing.lg + spacing.xs,
     },
-    rowIcon: { fontSize: 20 },
-    rowBody: { flex: 1 },
-    rowName: { fontSize: 16, color: colors.label },
-    rowNote: { fontSize: 13, color: colors.secondaryLabel },
-    rowAmount: { fontSize: 16, fontWeight: '600', color: colors.label },
-    trashButton: { paddingLeft: 6 },
-    trashIcon: { fontSize: 16 },
+    sectionTitle: { fontSize: 15, fontWeight: '600', color: colors.label },
+    sectionTotal: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: colors.secondaryLabel,
+      fontVariant: ['tabular-nums'],
+    },
+    empty: { color: colors.secondaryLabel, paddingVertical: spacing.xxl, textAlign: 'center' },
   });
 }

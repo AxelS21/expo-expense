@@ -30,7 +30,7 @@ Redesign the app UI around iOS 26 liquid glass, using Monzo as the visual refere
   - Present it as a formSheet with detents.
   - Large amount, category chips, custom keypad and native date picker.
   - Shared form component used by new and [id].
-- [ ] T3: Inicio and Historial visual pass.
+- [x] T3: Inicio and Historial visual pass.
   - Monzo-like hierarchy, glass surfaces and SF Symbols.
   - Swipe-to-delete instead of the trash emoji.
 
@@ -53,3 +53,4 @@ Redesign the app UI around iOS 26 liquid glass, using Monzo as the visual refere
 - T2 done (delegated writer): shared ExpenseForm + AmountKeypad, date pill with day stepper + @expo/ui DatePicker (unverified on device), xmark/trash toolbar buttons. Checks: tsc, no hex lint, no package changes, expo export ios OK. OTA 1.0.004.
 - Fix: edit and diagnostics moved into the history/settings tab stacks (back label was "(tabs)", header light). OTA 1.0.005.
 - Fix: inline-title header rendered opaque white (glass buttons light). All stacks now headerTransparent; OTA 1.0.006.
+- T3 done (delegated writer): home hero/category/recent cards, history day cards with totals, Link.Menu context menu delete (no gesture-handler), shared ExpenseRow, aggregate util + test. Checks: tsc, jest 14 passing, no hex, no package changes, export ios OK. OTA 1.0.007.
