@@ -12,7 +12,7 @@ Close the gaps left after the liquid glass redesign. All four items are user-app
 - [x] E2: Category management in Ajustes.
   - Create, edit (name and emoji), archive and unarchive, and delete with reassignment, using the existing repository functions.
 - [x] E3: Replace the typed "AAAA-MM-DD" fields in the Historial "Rango" filter with a native date selection.
-- [ ] E4: Write DESIGN.md (and `.impeccable/design.json`) describing the shipped visual system.
+- [x] E4: Write DESIGN.md (and `.impeccable/design.json`) describing the shipped visual system.
 
 ## Constraints
 - OTA only, with no new packages. expo-file-system, expo-sharing and expo-document-picker have been in the native build since the scaffold.
@@ -32,3 +32,4 @@ Close the gaps left after the liquid glass redesign. All four items are user-app
 - Route: delegated writers, one at a time (each task touches 2+ non-trivial files).
 - E1 done: backup.format (pure, 9 tests, RED 8 failing -> GREEN), backup.service (File/Paths API, share sheet, picker, preventive copy, exclusive transaction). jest 30, tsc OK, export OK. OTA 1.0.010. Note: older-schema backups not migrated (only v1 exists).
 - E2+E3 done: categories list/edit screens under settings stack, delete with reassignment; history range via shared DatePickerPanel + clampDayRange. jest 39, tsc OK, export OK. OTA 1.0.011.
+- E4 done: DESIGN.md + .impeccable/design.json by impeccable-documenter. Drift reported (not fixed): text-glyph icons instead of SF Symbols, 36pt history chips under 44pt, off-scale paddings, unused radius.sm and category colors.

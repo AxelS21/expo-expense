@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-10T00:00:00Z",
+  "title": "Design System: Expense",
+  "extensions": {
+    "colorMeta": {
+      "tint": { "role": "primary", "displayName": "Signal Blue", "canonical": "#2F6BFF", "darkVariant": "tint-dark", "tonalRamp": ["#0A1A45", "#11286B", "#1A3B99", "#2452CC", "#2F6BFF", "#5B8CFF", "#9BB8FF", "#E3ECFF"] },
+      "tint-dark": { "role": "primary", "displayName": "Signal Blue (dark)", "canonical": "#5B8CFF" },
+      "on-tint": { "role": "primary", "displayName": "On Tint", "canonical": "#FFFFFF" },
+      "destructive": { "role": "tertiary", "displayName": "Alarm Red", "canonical": "#E5484D", "darkVariant": "destructive-dark", "tonalRamp": ["#3D0F11", "#661A1D", "#8F2427", "#BA3034", "#E5484D", "#FF6369", "#FFA3A6", "#FFE5E6"] },
+      "destructive-dark": { "role": "tertiary", "displayName": "Alarm Red (dark)", "canonical": "#FF6369" },
+      "ground": { "role": "neutral", "displayName": "Mist Ground", "canonical": "#F3F4F8", "darkVariant": "ground-dark", "tonalRamp": ["#0B0F17", "#161B26", "#222938", "#5B6475", "#8A93A3", "#C9CFDA", "#E8EBF2", "#F3F4F8"] },
+      "ground-dark": { "role": "neutral", "displayName": "Mist Ground (dark)", "canonical": "#0B0F17" },
+      "surface": { "role": "neutral", "displayName": "Card White", "canonical": "#FFFFFF", "darkVariant": "surface-dark" },
+      "surface-dark": { "role": "neutral", "displayName": "Night Card", "canonical": "#161B26" },
+      "fill": { "role": "neutral", "displayName": "Quiet Fill", "canonical": "#E8EBF2", "darkVariant": "fill-dark" },
+      "fill-dark": { "role": "neutral", "displayName": "Quiet Fill (dark)", "canonical": "#222938" },
+      "label": { "role": "neutral", "displayName": "Ink", "canonical": "#0B1220", "darkVariant": "label-dark" },
+      "label-dark": { "role": "neutral", "displayName": "Ink (dark)", "canonical": "#F4F6FA" },
+      "secondary-label": { "role": "neutral", "displayName": "Slate", "canonical": "#5B6475", "darkVariant": "secondary-label-dark" },
+      "secondary-label-dark": { "role": "neutral", "displayName": "Slate (dark)", "canonical": "#A3ACBC" },
+      "tertiary-label": { "role": "neutral", "displayName": "Haze", "canonical": "#8A93A3", "darkVariant": "tertiary-label-dark" },
+      "tertiary-label-dark": { "role": "neutral", "displayName": "Haze (dark)", "canonical": "#7C8597" },
+      "separator": { "role": "neutral", "displayName": "Hairline", "canonical": "rgba(15,23,42,0.08)", "darkVariant": "separator-dark" },
+      "separator-dark": { "role": "neutral", "displayName": "Hairline (dark)", "canonical": "rgba(255,255,255,0.08)" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Amount on the new/edit expense sheet; tabular, shrinks to fit one line." },
+      "headline": { "displayName": "Headline", "purpose": "Month total in the Inicio hero card; tabular." },
+      "title": { "displayName": "Title", "purpose": "Section titles, empty-state titles, primary button labels." },
+      "body": { "displayName": "Body", "purpose": "Settings rows and settings actions." },
+      "row": { "displayName": "Row", "purpose": "Expense name in rows; amounts at the same size, 600, tabular." },
+      "callout": { "displayName": "Callout", "purpose": "Chips, pill fields, category amounts, hero labels, links (500-600)." },
+      "footnote": { "displayName": "Footnote", "purpose": "Row subtitles, day-section totals, settings captions." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "press-dim", "value": "opacity 0.55 (keypad), 0.85 (pill CTA)", "purpose": "Pressed feedback on tint and fill buttons." },
+      { "name": "haptic-select", "value": "Haptics.selectionAsync", "purpose": "Every keypad key press." },
+      { "name": "haptic-impact", "value": "Haptics.impactAsync(Medium)", "purpose": "Long-press clear on keypad backspace." },
+      { "name": "haptic-success", "value": "Haptics.notificationAsync(Success)", "purpose": "Confirmed trash of an expense." }
+    ],
+    "breakpoints": [],
+    "platform": {
+      "target": "ios",
+      "glass": "Native only: NativeTabs floating tab bar, Stack.Toolbar circular buttons, headerTransparent on every Stack.",
+      "screenRoot": "ScrollView/FlatList/SectionList with contentInsetAdjustmentBehavior=automatic.",
+      "themeSource": "src/constants/theme.ts lightColors/darkColors via useTheme(); PlatformColor intentionally not used."
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Full-width save action at the bottom of the expense form.",
+      "html": "<button class=\"ds-btn-primary\">Guardar</button>",
+      "css": ".ds-btn-primary { width: 100%; min-height: 54px; background: #2F6BFF; color: #FFFFFF; border: none; border-radius: 16px; font: 600 17px -apple-system, system-ui, sans-serif; transition: opacity 0.15s; } .ds-btn-primary:active { opacity: 0.85; } .ds-btn-primary:focus-visible { outline: 2px solid #2F6BFF; outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.4; }"
+    },
+    {
+      "name": "Pill CTA",
+      "kind": "button",
+      "refersTo": "button-pill",
+      "description": "Small tint pill for empty-state calls to action.",
+      "html": "<button class=\"ds-btn-pill\">Cargar primer gasto</button>",
+      "css": ".ds-btn-pill { background: #2F6BFF; color: #FFFFFF; border: none; border-radius: 999px; padding: 12px 20px; font: 600 16px -apple-system, system-ui, sans-serif; transition: opacity 0.15s; } .ds-btn-pill:active { opacity: 0.85; } .ds-btn-pill:focus-visible { outline: 2px solid #2F6BFF; outline-offset: 2px; }"
+    },
+    {
+      "name": "Category Chip",
+      "kind": "chip",
+      "refersTo": "chip-category",
+      "description": "Horizontal category selector on the expense form; selected turns Signal Blue.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip ds-chip-on\"><span>🍔</span>Comida</button><button class=\"ds-chip\"><span>🛒</span>Supermercado</button></div>",
+      "css": ".ds-chips { display: flex; gap: 8px; padding: 16px; background: #F3F4F8; } .ds-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border: none; border-radius: 999px; background: #FFFFFF; color: #0B1220; font: 500 15px -apple-system, system-ui, sans-serif; } .ds-chip span { font-size: 18px; } .ds-chip-on { background: #2F6BFF; color: #FFFFFF; } .ds-chip:focus-visible { outline: 2px solid #2F6BFF; outline-offset: 2px; }"
+    },
+    {
+      "name": "Hero Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Inicio month total: surface card on tinted ground with a large tabular amount.",
+      "html": "<div class=\"ds-ground\"><div class=\"ds-card\"><div class=\"ds-card-label\">Este mes</div><div class=\"ds-card-total\">$ 184.250</div><div class=\"ds-card-note\">$ 12.400 menos que septiembre</div></div></div>",
+      "css": ".ds-ground { background: #F3F4F8; padding: 16px; } .ds-card { background: #FFFFFF; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 4px; font-family: -apple-system, system-ui, sans-serif; } .ds-card-label { font-size: 15px; font-weight: 600; color: #5B6475; } .ds-card-total { font-size: 44px; font-weight: 700; color: #0B1220; font-variant-numeric: tabular-nums; } .ds-card-note { font-size: 14px; color: #5B6475; }"
+    },
+    {
+      "name": "Expense Row List",
+      "kind": "custom",
+      "refersTo": "expense-row",
+      "description": "Grouped rows forming one card: emoji avatar, name and subtitle, trailing tabular amount, inset hairline.",
+      "html": "<div class=\"ds-ground\"><div class=\"ds-list\"><div class=\"ds-row\" tabindex=\"0\"><div class=\"ds-avatar\">🍔</div><div class=\"ds-row-body ds-row-sep\"><div class=\"ds-row-text\"><div class=\"ds-row-name\">Comida</div><div class=\"ds-row-sub\">Almuerzo</div></div><div class=\"ds-row-amt\">$ 8.500</div></div></div><div class=\"ds-row\" tabindex=\"0\"><div class=\"ds-avatar\">🚗</div><div class=\"ds-row-body\"><div class=\"ds-row-text\"><div class=\"ds-row-name\">Transporte</div></div><div class=\"ds-row-amt\">$ 2.100</div></div></div></div></div>",
+      "css": ".ds-ground { background: #F3F4F8; padding: 16px; } .ds-list { border-radius: 16px; overflow: hidden; font-family: -apple-system, system-ui, sans-serif; } .ds-row { display: flex; align-items: center; background: #FFFFFF; padding-left: 16px; } .ds-row:active { background: #E8EBF2; } .ds-row:focus-visible { outline: 2px solid #2F6BFF; outline-offset: -2px; } .ds-avatar { width: 40px; height: 40px; border-radius: 50%; background: #E8EBF2; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; } .ds-row-body { flex: 1; display: flex; align-items: center; gap: 12px; margin-left: 12px; padding: 12px 16px 12px 0; } .ds-row-sep { border-bottom: 0.5px solid rgba(15,23,42,0.08); } .ds-row-text { flex: 1; display: flex; flex-direction: column; gap: 2px; } .ds-row-name { font-size: 16px; color: #0B1220; } .ds-row-sub { font-size: 13px; color: #5B6475; } .ds-row-amt { font-size: 16px; font-weight: 600; color: #0B1220; font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Amount Keypad",
+      "kind": "custom",
+      "refersTo": "keypad-key",
+      "description": "3x4 custom keypad under the display amount in the new-expense sheet.",
+      "html": "<div class=\"ds-keypad\"><button class=\"ds-key\">1</button><button class=\"ds-key\">2</button><button class=\"ds-key\">3</button><button class=\"ds-key\">4</button><button class=\"ds-key\">5</button><button class=\"ds-key\">6</button><button class=\"ds-key\">7</button><button class=\"ds-key\">8</button><button class=\"ds-key\">9</button><button class=\"ds-key\">,</button><button class=\"ds-key\">0</button><button class=\"ds-key\" aria-label=\"Borrar\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"><path d=\"M9 5h11v14H9l-6-7z\"/><path d=\"M12 9l5 6M17 9l-5 6\" stroke-linecap=\"round\"/></svg></button></div>",
+      "css": ".ds-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 20px; background: #F3F4F8; } .ds-key { min-height: 56px; border: none; border-radius: 12px; background: #E8EBF2; color: #0B1220; font: 500 26px -apple-system, system-ui, sans-serif; font-variant-numeric: tabular-nums; display: flex; align-items: center; justify-content: center; } .ds-key:active { opacity: 0.55; } .ds-key:focus-visible { outline: 2px solid #2F6BFF; outline-offset: 2px; }"
+    },
+    {
+      "name": "Pill Field",
+      "kind": "input",
+      "refersTo": "chip-category",
+      "description": "Date and note fields on the expense form: surface pill, fill when active.",
+      "html": "<div class=\"ds-ground\"><button class=\"ds-pill-field\">Hoy</button><button class=\"ds-pill-field ds-pill-muted\">Agregar nota</button></div>",
+      "css": ".ds-ground { background: #F3F4F8; padding: 16px; display: flex; gap: 8px; } .ds-pill-field { min-height: 44px; padding: 0 12px; border: none; border-radius: 999px; background: #FFFFFF; color: #0B1220; font: 500 15px -apple-system, system-ui, sans-serif; } .ds-pill-field:active { background: #E8EBF2; } .ds-pill-field:focus-visible { outline: 2px solid #2F6BFF; outline-offset: 2px; } .ds-pill-muted { color: #5B6475; }"
+    },
+    {
+      "name": "Settings Group",
+      "kind": "card",
+      "refersTo": "settings-group",
+      "description": "Grouped settings list at 12px radius with 17px rows and tint actions.",
+      "html": "<div class=\"ds-ground\"><div class=\"ds-group\"><button class=\"ds-group-row\">Exportar backup</button><button class=\"ds-group-row\">Restaurar backup</button></div></div>",
+      "css": ".ds-ground { background: #F3F4F8; padding: 16px; } .ds-group { background: #FFFFFF; border-radius: 12px; overflow: hidden; } .ds-group-row { display: block; width: 100%; text-align: left; padding: 12px 16px; border: none; background: transparent; color: #2F6BFF; font: 400 17px -apple-system, system-ui, sans-serif; } .ds-group-row + .ds-group-row { border-top: 0.5px solid rgba(15,23,42,0.08); } .ds-group-row:active { background: #E8EBF2; } .ds-group-row:focus-visible { outline: 2px solid #2F6BFF; outline-offset: -2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Glass Ledger",
+    "overview": "Expense is a Monzo-inspired iOS 26 app. The system's own chrome does the glass work: a floating native tab bar, circular glass toolbar buttons, and transparent headers that float over a soft tinted ground. The app itself draws flat, opaque surface cards on that ground and fills them with money. Amounts are the loudest thing on every screen, set large, bold and tabular.\n\nColor is restrained. Neutrals carry the whole interface and a single blue tint marks what is selected, actionable or in progress. Category identity comes from emoji in circular fills, not from color. Density is calm: 16px screen gutters, 28px between sections, generous row padding, 44px minimum touch height.\n\nEvery color token exists twice, light and dark, selected from the JS color scheme. Both palettes are explicit hex values; the code dropped `PlatformColor` because its native resolution did not follow the container appearance on iOS 26.",
+    "keyCharacteristics": [
+      "Native liquid glass comes from the system (NativeTabs, Stack.Toolbar, transparent headers). The app paints no glass of its own.",
+      "Opaque surface cards on a tinted ground; no shadows anywhere.",
+      "Large tabular amounts in SF Pro bold.",
+      "One blue tint, used sparingly.",
+      "Emoji category avatars in circular neutral fills.",
+      "Native iOS controls for menus, alerts, date pickers and action sheets."
+    ],
+    "rules": [
+      { "name": "The One Blue Rule", "body": "Signal Blue is the only chromatic color the app paints. Selection, primary action and progress share it; nothing else gets a hue.", "section": "colors" },
+      { "name": "The Twin Palette Rule", "body": "Every new color is added to both `lightColors` and `darkColors` in `src/constants/theme.ts`, and components read it through `useTheme()`. No hex literals in screens or components.", "section": "colors" },
+      { "name": "The Tabular Money Rule", "body": "Every rendered amount uses `fontVariant: ['tabular-nums']`, from the 56px display down to 13px section totals.", "section": "typography" },
+      { "name": "The System Voice Rule", "body": "SF Pro only. Hierarchy comes from the weights 400, 500, 600 and 700, never from a second family.", "section": "typography" },
+      { "name": "The Borrowed Glass Rule", "body": "Glass belongs to floating chrome: NativeTabs, `Stack.Toolbar` buttons, transparent headers, and anything else that floats over scrolling content. Content cards, rows and fields stay opaque and shadowless.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do root every Stack screen in a scroll container with `contentInsetAdjustmentBehavior=\"automatic\"`.",
+      "Do push detail screens inside their tab's Stack, and keep only modal sheets in the root Stack.",
+      "Do read colors through `useTheme()` and add every new color to both palettes.",
+      "Do set every amount with tabular figures.",
+      "Do use native controls for header actions, row menus, alerts and date picking.",
+      "Do keep interactive elements at least 44px tall."
+    ],
+    "donts": [
+      "Don't put glass, blur or shadows on content cards, rows or fields; glass is for chrome that floats over content.",
+      "Don't introduce a second accent hue; category identity is emoji, not color.",
+      "Don't load custom fonts; SF Pro carries the whole hierarchy.",
+      "Don't use `PlatformColor` for theme colors; it resolved the wrong appearance on iOS 26."
+    ]
+  }
+}
