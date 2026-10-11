@@ -12,6 +12,7 @@ import {
   type BackupData,
   type BackupError,
   type BackupExpense,
+  type BackupQuickLogPreset,
   type BackupSetting,
   backupFileName,
   buildBackup,
@@ -37,9 +38,13 @@ async function readAllData(): Promise<{
      FROM expenses ORDER BY expense_date`
   );
   const settings = await db.getAllAsync<BackupSetting>('SELECT key, value FROM settings');
+  const quickLogPresets = await db.getAllAsync<BackupQuickLogPreset>(
+    `SELECT id, category_id, amount, sort_order, created_at, updated_at
+     FROM quick_log_presets ORDER BY sort_order`
+  );
   return {
     schemaVersion: version?.user_version ?? APP_SCHEMA_VERSION,
-    data: { categories, expenses, settings },
+    data: { categories, expenses, settings, quick_log_presets: quickLogPresets },
   };
 }
 
@@ -107,9 +112,11 @@ export type RestoreSummary = {
 export async function restoreBackup(backup: Backup): Promise<RestoreSummary> {
   const preventive = await createBackupFile(Paths.document, 'expense-pre-restore');
   const db = await getDatabase();
-  const { categories, expenses, settings } = backup.data;
+  const { categories, expenses, settings, quick_log_presets: quickLogPresets } = backup.data;
 
   await db.withExclusiveTransactionAsync(async (tx) => {
+    // widget_ingested is kept on purpose: it only prevents re-inserting widget taps.
+    await tx.runAsync('DELETE FROM quick_log_presets');
     await tx.runAsync('DELETE FROM expenses');
     await tx.runAsync('DELETE FROM categories');
     await tx.runAsync('DELETE FROM settings');
@@ -139,6 +146,13 @@ export async function restoreBackup(backup: Backup): Promise<RestoreSummary> {
     }
     for (const s of settings) {
       await tx.runAsync('INSERT INTO settings (key, value) VALUES (?, ?)', [s.key, s.value]);
+    }
+    for (const p of quickLogPresets) {
+      await tx.runAsync(
+        `INSERT INTO quick_log_presets (id, category_id, amount, sort_order, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [p.id, p.category_id, p.amount, p.sort_order, p.created_at, p.updated_at]
+      );
     }
   });
 

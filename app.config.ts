@@ -4,7 +4,7 @@ const config: ExpoConfig = {
   name: 'Expense',
   slug: 'expense',
   scheme: 'expense',
-  version: '1.0.0',
+  version: '1.1.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'automatic',
@@ -31,6 +31,14 @@ const config: ExpoConfig = {
             description: 'Abre el formulario para cargar un gasto.',
             ios: {
               supportedFamilies: ['accessoryCircular'],
+            },
+          },
+          {
+            name: 'QuickLogWidget',
+            displayName: 'Registro rápido',
+            description: 'Registra un gasto frecuente con un toque, sin abrir la app.',
+            ios: {
+              supportedFamilies: ['accessoryRectangular', 'systemSmall', 'systemMedium'],
             },
           },
         ],

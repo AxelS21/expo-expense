@@ -1,12 +1,16 @@
 import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { Platform } from 'react-native';
 
+import { syncQuickLog } from '@/services/quickLog.service';
+
 export type WidgetDiagnostics = {
   status: 'skipped' | 'registered' | 'failed';
   error?: string;
   widgetsDirectory?: string | null;
   timeline?: string;
   provisionedAppGroups?: string;
+  /** Result of the last quick log ingestion run. */
+  quickLogSync?: string;
 };
 
 // The signed provisioning profile embeds an XML plist; read the App Groups it grants.
@@ -69,4 +73,18 @@ export function registerWidgets(): void {
   } catch (error) {
     diagnostics = { ...diagnostics, status: 'failed', error: describeError(error) };
   }
+}
+
+/**
+ * Ingests quick log widget taps and refreshes its presets. Safe to call often: concurrent
+ * calls share one run, and it is a no-op outside iOS builds with expo-widgets.
+ */
+export function runQuickLogSync(): void {
+  syncQuickLog()
+    .then((created) => {
+      diagnostics = { ...diagnostics, quickLogSync: `ok: ${created} (${new Date().toISOString()})` };
+    })
+    .catch((error: unknown) => {
+      diagnostics = { ...diagnostics, quickLogSync: `error: ${describeError(error)}` };
+    });
 }

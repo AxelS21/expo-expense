@@ -17,6 +17,7 @@ import { type ThemeColors, radius, spacing, useTheme } from '@/constants/theme';
 import { Symbol } from '@/components/ui/Symbol';
 import type { Backup } from '@/services/backup.format';
 import { exportBackup, pickBackup, restoreBackup } from '@/services/backup.service';
+import { runQuickLogSync } from '@/widgets/register';
 
 type BackupTask = 'export' | 'restore' | null;
 
@@ -55,6 +56,7 @@ export default function SettingsScreen() {
     setTask('restore');
     try {
       const summary = await restoreBackup(backup);
+      runQuickLogSync();
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert(
         'Backup restaurado',
@@ -123,6 +125,15 @@ export default function SettingsScreen() {
           style={({ pressed }) => [styles.valueRow, pressed && styles.pressed]}
         >
           <Text style={styles.rowText}>Categorías</Text>
+          <Symbol name="chevron.right" size={14} weight="semibold" color={colors.tertiaryLabel} fallback="›" />
+        </Pressable>
+        <View style={styles.separator} />
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push('/settings/quick-log')}
+          style={({ pressed }) => [styles.valueRow, pressed && styles.pressed]}
+        >
+          <Text style={styles.rowText}>Accesos rápidos del widget</Text>
           <Symbol name="chevron.right" size={14} weight="semibold" color={colors.tertiaryLabel} fallback="›" />
         </Pressable>
       </View>

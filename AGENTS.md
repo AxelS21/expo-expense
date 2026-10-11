@@ -211,6 +211,8 @@ Preferred quick-add route:
 
 `expense://expense/new` (route file: `src/app/expense/new.tsx`)
 
+The quick log widget (`src/widgets/QuickLogWidget.tsx`) logs preset expenses without opening the app. A preset button's `onPress` runs in the widget extension's JavaScriptCore context, which has no native modules and cannot reach SQLite. It only returns new props, `{ pending: [...pending, { id, presetId, at }], lastLogged }`, which expo-widgets merges into the timeline entry stored in App Group UserDefaults. The app drains that queue in `syncQuickLog()` (`src/services/quickLog.service.ts`) on launch and whenever it becomes active. It inserts the expenses and records each entry id in `widget_ingested` in one transaction, so a crash never inserts the same tap twice. Then it re-reads the timeline and writes it back with only the ingested ids removed, so taps made during the sync stay queued, and pushes the current presets (configured in Ajustes, table `quick_log_presets`). Keep the widget function self-contained: the `'widget'` directive serializes it to a string, so it can only use the @expo/ui components and modifiers that the widget bundle exposes as globals.
+
 Builds and updates follow `docs/release-workflow.md`: JavaScript changes ship via EAS Update; native changes require bumping `version` and a GitHub Actions build installed with AltStore.
 
 ---

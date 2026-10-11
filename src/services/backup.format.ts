@@ -26,10 +26,23 @@ export type BackupExpense = {
 
 export type BackupSetting = { key: string; value: string };
 
+export type BackupQuickLogPreset = {
+  id: string;
+  category_id: string;
+  amount: number;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
+/** First schema version whose backups carry quick_log_presets. */
+export const QUICK_LOG_PRESETS_SCHEMA_VERSION = 2;
+
 export type BackupData = {
   categories: BackupCategory[];
   expenses: BackupExpense[];
   settings: BackupSetting[];
+  quick_log_presets: BackupQuickLogPreset[];
 };
 
 export type Backup = {
@@ -99,6 +112,15 @@ const EXPENSE_SHAPE: Shape = {
 
 const SETTING_SHAPE: Shape = { key: 'string', value: 'string' };
 
+const QUICK_LOG_PRESET_SHAPE: Shape = {
+  id: 'string',
+  category_id: 'string',
+  amount: 'number',
+  sort_order: 'number',
+  created_at: 'string',
+  updated_at: 'string',
+};
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -161,12 +183,20 @@ export function parseBackup(json: string, currentSchemaVersion: number): ParseBa
   const categories = readList<BackupCategory>(raw.data.categories, CATEGORY_SHAPE);
   const expenses = readList<BackupExpense>(raw.data.expenses, EXPENSE_SHAPE);
   const settings = readList<BackupSetting>(raw.data.settings, SETTING_SHAPE);
-  if (!categories || !expenses || !settings) {
+  // Backups older than schema 2 predate the quick log presets table.
+  const quickLogPresets =
+    schemaVersion < QUICK_LOG_PRESETS_SCHEMA_VERSION
+      ? []
+      : readList<BackupQuickLogPreset>(raw.data.quick_log_presets, QUICK_LOG_PRESET_SHAPE);
+  if (!categories || !expenses || !settings || !quickLogPresets) {
     return fail('invalid_structure', STRUCTURE_ERROR);
   }
 
   const categoryIds = new Set(categories.map((category) => category.id));
-  if (!expenses.every((expense) => categoryIds.has(expense.category_id))) {
+  if (
+    !expenses.every((expense) => categoryIds.has(expense.category_id)) ||
+    !quickLogPresets.every((preset) => categoryIds.has(preset.category_id))
+  ) {
     return fail('invalid_structure', STRUCTURE_ERROR);
   }
 
@@ -177,7 +207,7 @@ export function parseBackup(json: string, currentSchemaVersion: number): ParseBa
       schemaVersion,
       exportedAt: raw.exportedAt,
       appRelease: typeof raw.appRelease === 'string' ? raw.appRelease : '',
-      data: { categories, expenses, settings },
+      data: { categories, expenses, settings, quick_log_presets: quickLogPresets },
     },
   };
 }

@@ -1,5 +1,6 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 import * as m001 from './001_initial_schema';
+import * as m002 from './002_quick_log_presets';
 
 export interface Migration {
   version: number;
@@ -11,4 +12,7 @@ export interface Migration {
  * Cada migracion se aplica una unica vez, en orden, dentro de una transaccion.
  * Nunca reordenar ni editar una migracion ya publicada: agregar una nueva.
  */
-export const migrations: Migration[] = [{ version: 1, name: '001_initial_schema', up: m001.up }];
+export const migrations: Migration[] = [
+  { version: 1, name: '001_initial_schema', up: m001.up },
+  { version: 2, name: '002_quick_log_presets', up: m002.up },
+];

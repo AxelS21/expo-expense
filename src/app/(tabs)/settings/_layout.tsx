@@ -19,6 +19,7 @@ export default function Layout() {
       <Stack.Screen name="categories/index" options={{ title: 'Categorías' }} />
       <Stack.Screen name="categories/[id]" options={{ title: 'Categoría', headerLargeTitle: false }} />
       <Stack.Screen name="diagnostics"options={{ title: 'Diagnóstico', headerLargeTitle: false }} />
+      <Stack.Screen name="quick-log" options={{ title: 'Accesos rápidos', headerLargeTitle: false }} />
     </Stack>
   );
 }

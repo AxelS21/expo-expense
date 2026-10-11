@@ -33,6 +33,7 @@ const data: BackupData = {
     },
   ],
   settings: [{ key: 'theme', value: 'dark' }],
+  quick_log_presets: [],
 };
 
 function build(schemaVersion = 1) {
@@ -110,6 +111,46 @@ describe('parseBackup', () => {
     const backup = build();
     const broken = { ...backup, data: { ...backup.data, categories: [] } };
     expect(parseBackup(JSON.stringify(broken), 1)).toMatchObject({
+      ok: false,
+      error: { code: 'invalid_structure' },
+    });
+  });
+});
+
+describe('parseBackup quick log presets', () => {
+  const preset = {
+    id: 'p1',
+    category_id: 'c1',
+    amount: 1500,
+    sort_order: 0,
+    created_at: '2026-01-01T00:00:00.000Z',
+    updated_at: '2026-01-01T00:00:00.000Z',
+  };
+
+  it('reads a schemaVersion 1 backup without presets as an empty list', () => {
+    const { quick_log_presets: _omit, ...v1Data } = data;
+    const json = JSON.stringify({ ...build(1), data: v1Data });
+    const result = parseBackup(json, 2);
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.backup.data.quick_log_presets).toEqual([]);
+  });
+
+  it('round-trips presets in a schemaVersion 2 backup', () => {
+    const backup = { ...build(2), data: { ...data, quick_log_presets: [preset] } };
+    const result = parseBackup(serializeBackup(backup), 2);
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.backup.data.quick_log_presets).toEqual([preset]);
+  });
+
+  it('rejects a schemaVersion 2 backup without the presets list', () => {
+    const { quick_log_presets: _omit, ...v2Data } = data;
+    const json = JSON.stringify({ ...build(2), data: v2Data });
+    expect(parseBackup(json, 2)).toMatchObject({ ok: false, error: { code: 'invalid_structure' } });
+  });
+
+  it('rejects presets pointing to unknown categories', () => {
+    const backup = { ...build(2), data: { ...data, quick_log_presets: [{ ...preset, category_id: 'x' }] } };
+    expect(parseBackup(serializeBackup(backup), 2)).toMatchObject({
       ok: false,
       error: { code: 'invalid_structure' },
     });
