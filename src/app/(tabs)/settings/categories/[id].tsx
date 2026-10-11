@@ -183,10 +183,10 @@ export default function CategoryEditScreen() {
           <View style={styles.fieldRow}>
             <Text style={styles.fieldLabel}>Emoji</Text>
             <TextInput
-              style={[styles.input, styles.emojiInput]}
+              style={[styles.input, icon.length > 0 && styles.emojiInput]}
               value={icon}
               onChangeText={setIcon}
-              placeholder="🙂"
+              placeholder="Elegí un emoji"
               placeholderTextColor={colors.tertiaryLabel}
               maxLength={16}
               accessibilityLabel="Emoji de la categoría"
